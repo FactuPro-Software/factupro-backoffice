@@ -1,0 +1,8 @@
+@import 'tailwindcss';
+
+@plugin 'tailwindcss-animate';
+
+@custom-variant dark (&:is(.dark *));
+
+@import '../styles/tokens.css';
+@import '../styles/base.css';
