@@ -25,7 +25,8 @@
       "@hooks/*": ["hooks/*"],
       "@lib/*": ["lib/*"],
       "@providers/*": ["providers/*"],
-      "@styles/*": ["styles/*"]
+      "@styles/*": ["styles/*"],
+      "@server/*": ["server/*"]
     }
   },
   "include": [
