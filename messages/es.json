@@ -1,0 +1,15 @@
+{
+  "nav": {
+    "dashboard": "Panel",
+    "settings": "Configuración"
+  },
+  "header": {
+    "myprofile": "Mi perfil",
+    "logout": "Cerrar sesión",
+    "toggleSidebar": "Alternar barra lateral",
+    "toggleTheme": "Alternar tema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema"
+  }
+}
