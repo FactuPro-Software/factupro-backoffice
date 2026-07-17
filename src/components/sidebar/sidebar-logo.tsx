@@ -14,7 +14,7 @@ export function SidebarLogo() {
     >
       <Building2 className="size-6 shrink-0 text-primary-details" />
       {expanded && (
-        <span className="truncate font-semibold text-primary-headline">
+        <span className="truncate font-semibold text-foreground">
           Backoffice
         </span>
       )}
