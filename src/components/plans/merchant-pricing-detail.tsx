@@ -43,22 +43,22 @@ export function MerchantPricingDetail({
         <CardHeader>
           <CardTitle>{t('merchantCardTitle')}</CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
+        <CardContent className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="flex items-baseline gap-2">
             <dt className="text-xs text-muted-foreground">{t('name')}</dt>
             <dd className="text-sm font-medium">{merchant.name}</dd>
           </div>
-          <div>
+          <div className="flex items-baseline gap-2">
             <dt className="text-xs text-muted-foreground">{t('nif')}</dt>
             <dd className="font-mono text-sm font-medium">
               {merchant.nif ?? <span className="text-muted-foreground">—</span>}
             </dd>
           </div>
-          <div>
+          <div className="flex items-baseline gap-2">
             <dt className="text-xs text-muted-foreground">{t('id')}</dt>
             <dd className="break-all font-mono text-xs text-muted-foreground">{merchant.id}</dd>
           </div>
-          <div>
+          <div className="flex items-baseline gap-2">
             <dt className="text-xs text-muted-foreground">{t('status')}</dt>
             <dd className="text-sm font-medium">{merchant.status}</dd>
           </div>
@@ -69,25 +69,25 @@ export function MerchantPricingDetail({
         <CardHeader>
           <CardTitle>{t('planCardTitle')}</CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
+        <CardContent className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="flex items-baseline gap-2">
             <dt className="text-xs text-muted-foreground">{t('plan')}</dt>
             <dd className="text-sm font-medium">
               <PlanBadge planName={plan.planName} editable={editable} />
             </dd>
           </div>
-          <div>
+          <div className="flex items-baseline gap-2">
             <dt className="text-xs text-muted-foreground">{t('level')}</dt>
             <dd className="text-sm font-medium">{plan.planLevel}</dd>
           </div>
-          <div>
-            <dt className="text-xs text-muted-foreground">{t('expiresOn')}</dt>
-            <dd>
-              <p className="text-base font-semibold">{toDdMmYyyy(plan.expirationDateMadrid)}</p>
-              <p className="text-xs text-muted-foreground">{t('expiresHint')}</p>
-            </dd>
+          <div className="flex flex-col gap-0.5">
+            <div className="flex items-baseline gap-2">
+              <dt className="text-xs text-muted-foreground">{t('expiresOn')}</dt>
+              <dd className="text-base font-semibold">{toDdMmYyyy(plan.expirationDateMadrid)}</dd>
+            </div>
+            <p className="text-xs text-muted-foreground">{t('expiresHint')}</p>
           </div>
-          <div>
+          <div className="flex items-baseline gap-2">
             <dt className="text-xs text-muted-foreground">{t('status')}</dt>
             <dd>
               {plan.expired ? (

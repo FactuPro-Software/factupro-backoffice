@@ -114,17 +114,19 @@ export function ExpirationDateEditor({ pricing, minExpirationDate }: ExpirationD
           <input type="hidden" name="currentExpirationDate" value={currentExpiration} />
 
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="expirationDate">{t('dateLabel')}</Label>
-            <Input
-              id="expirationDate"
-              name="expirationDate"
-              type="date"
-              className="w-[220px]"
-              required
-              min={minExpirationDate}
-              value={selectedDate}
-              onChange={(event) => setSelectedDate(event.target.value)}
-            />
+            <div className="flex items-center gap-2">
+              <Label htmlFor="expirationDate">{t('dateLabel')}</Label>
+              <Input
+                id="expirationDate"
+                name="expirationDate"
+                type="date"
+                className="w-[220px]"
+                required
+                min={minExpirationDate}
+                value={selectedDate}
+                onChange={(event) => setSelectedDate(event.target.value)}
+              />
+            </div>
             <p className="text-xs text-muted-foreground">{t('dateHelper')}</p>
 
             {isEmpty ? (
