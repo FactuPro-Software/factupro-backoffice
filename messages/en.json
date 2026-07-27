@@ -1,7 +1,8 @@
 {
   "nav": {
     "dashboard": "Dashboard",
-    "settings": "Settings"
+    "settings": "Settings",
+    "plans": "Plans"
   },
   "header": {
     "myprofile": "My profile",
@@ -11,5 +12,108 @@
     "light": "Light",
     "dark": "Dark",
     "system": "System"
+  },
+  "plans": {
+    "title": "Plans",
+    "subtitle": "Search for a merchant and adjust their plan expiration date.",
+    "search": {
+      "title": "Search merchant",
+      "tabNif": "NIF",
+      "tabEmail": "User email",
+      "nifLabel": "Merchant NIF",
+      "nifHelper": "The search is case-insensitive.",
+      "nifRequired": "Enter a NIF.",
+      "emailLabel": "User email",
+      "emailHelper": "Every merchant they belong to will be shown.",
+      "emailRequired": "Enter an email.",
+      "submit": "Search",
+      "submitPending": "Searching…",
+      "empty": "Search for a merchant by NIF or user email to get started."
+    },
+    "errors": {
+      "nifNotFoundTitle": "Merchant not found",
+      "nifNotFoundBody": "No merchant exists with NIF {value}. Check the value and try again.",
+      "emailNotFoundTitle": "User not found",
+      "emailNotFoundBody": "No user exists with email {value}.",
+      "noActiveMerchantTitle": "No active merchants",
+      "noActiveMerchantBody": "User {value} has no active merchant.",
+      "pricingMissingTitle": "No plan data",
+      "pricingMissingBody": "Merchant {value} has no associated plan data. Contact the backend team.",
+      "pricingMissingAllTitle": "No plan data",
+      "pricingMissingAllBody": "None of {value}'s merchants have associated plan data.",
+      "connectionTitle": "Could not connect to the API",
+      "connectionBody": "Check the environment configuration and try again.",
+      "unexpectedTitle": "Unexpected error",
+      "unexpectedBody": "Could not complete the search. Try again."
+    },
+    "picker": {
+      "back": "Back to search",
+      "title": "Merchants for {email}",
+      "count": "{n} merchants found",
+      "columnMerchant": "Merchant",
+      "columnNif": "NIF",
+      "columnPlan": "Plan",
+      "columnExpires": "Expires",
+      "select": "Select",
+      "expired": "Expired"
+    },
+    "detail": {
+      "backToSearch": "Back to search",
+      "backToList": "Back to list",
+      "merchantCardTitle": "Merchant details",
+      "name": "Name",
+      "nif": "NIF",
+      "id": "ID",
+      "status": "Status",
+      "planCardTitle": "Current plan",
+      "plan": "Plan",
+      "level": "Level",
+      "expiresOn": "Expires on",
+      "expiresHint": "00:00 (Madrid time) — first day without access.",
+      "active": "Active",
+      "expired": "Expired"
+    },
+    "editor": {
+      "cardTitle": "New expiration date",
+      "notEditableTitle": "This plan cannot be edited",
+      "notEditableBody": "Only the expiration date of trial and digital_kit plans can be changed. This merchant's current plan is «<code>{planName}</code>».",
+      "dateLabel": "New expiration date",
+      "dateHelper": "The plan will stop being active at 00:00 (Madrid time) on the selected day. From that day on, the merchant will NO longer have access.",
+      "previewCurrent": "Current:",
+      "previewNew": "New:",
+      "reasonLabel": "Reason (optional)",
+      "reasonPlaceholder": "E.g.: extension agreed with support",
+      "reasonHelper": "This will be saved in the audit log.",
+      "save": "Save changes",
+      "cancel": "Cancel",
+      "validationEmpty": "Select a date.",
+      "validationPast": "The date must be after today.",
+      "unchanged": "You haven't changed the date."
+    },
+    "confirm": {
+      "title": "Confirm the expiration change?",
+      "merchantLine": "Merchant: <b>{name} ({nif})</b>",
+      "planLine": "Plan: <code>{planName}</code>",
+      "currentDateLabel": "Current date:",
+      "newDateLabel": "New date:",
+      "warning": "This action permanently overwrites the current date. The previous value will only remain in the backoffice audit log.",
+      "cancel": "Cancel",
+      "submit": "Yes, update date",
+      "submitPending": "Updating…"
+    },
+    "toast": {
+      "successTitle": "Expiration date updated",
+      "successBody": "{merchant}: {from} → {to}",
+      "notEditableTitle": "Could not update",
+      "notEditableBody": "This merchant's plan no longer allows date changes. Reload the page.",
+      "merchantGoneTitle": "Could not update",
+      "merchantGoneBody": "The merchant or its plan data no longer exists.",
+      "invalidDateTitle": "Invalid date",
+      "invalidDateBody": "The date must be after today and in the correct format.",
+      "connectionTitle": "No connection to the API",
+      "connectionBody": "Could not reach the backend. Try again.",
+      "unexpectedTitle": "Unexpected error",
+      "unexpectedBody": "Could not save the change. Try again."
+    }
   }
 }
