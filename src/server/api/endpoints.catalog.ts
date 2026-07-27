@@ -290,4 +290,32 @@ export const BACKOFFICE_ENDPOINTS = [
     kind: 'admin',
     requiresApiKey: true,
   },
+
+  {
+    controller: 'merchant-pricing',
+    method: 'GET',
+    path: 'merchant-pricing/by-nif/:nif',
+    purpose: 'Merchant pricing + plan + editable flag, by NIF',
+    kind: 'admin',
+    requiresApiKey: true,
+    bound: true,
+  },
+  {
+    controller: 'merchant-pricing',
+    method: 'GET',
+    path: 'merchant-pricing/by-user-email',
+    purpose: 'Pricing for every merchant a user belongs to, by email',
+    kind: 'admin',
+    requiresApiKey: true,
+    bound: true,
+  },
+  {
+    controller: 'merchant-pricing',
+    method: 'PATCH',
+    path: 'merchant-pricing/:merchantId/expiration-date',
+    purpose: 'Update plan expiration date (trial / digital_kit only)',
+    kind: 'admin',
+    requiresApiKey: true,
+    bound: true,
+  },
 ] as const satisfies readonly BackofficeEndpoint[];
