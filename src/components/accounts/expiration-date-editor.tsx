@@ -21,7 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { updateExpirationDateAction, type UpdateExpirationState } from '@/app/(dashboard)/plans/actions';
+import { updateExpirationDateAction, type UpdateExpirationState } from '@/app/(dashboard)/accounts/actions';
 import type { BackofficeMerchantPricingDto } from '@/server/api/endpoints/merchant-pricing';
 
 interface ExpirationDateEditorProps {
@@ -37,9 +37,9 @@ const INITIAL_STATE: UpdateExpirationState = { status: 'idle' };
 
 /** Card 3 — "Nueva fecha de expiración". Native `input[type=date]` (F2), no date libraries (F3). */
 export function ExpirationDateEditor({ pricing, minExpirationDate }: ExpirationDateEditorProps) {
-  const t = useTranslations('plans.editor');
-  const tConfirm = useTranslations('plans.confirm');
-  const tToast = useTranslations('plans.toast');
+  const t = useTranslations('accounts.editor');
+  const tConfirm = useTranslations('accounts.confirm');
+  const tToast = useTranslations('accounts.toast');
 
   const currentExpiration = pricing.pricing.expirationDateMadrid;
   const formId = `expiration-date-form-${pricing.merchant.id}`;

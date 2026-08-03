@@ -2,7 +2,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "settings": "Settings",
-    "plans": "Plans"
+    "accounts": "Accounts"
   },
   "header": {
     "myprofile": "My profile",
@@ -13,7 +13,7 @@
     "dark": "Dark",
     "system": "System"
   },
-  "plans": {
+  "accounts": {
     "title": "Plans",
     "subtitle": "Search for a merchant and adjust their plan expiration date.",
     "search": {
@@ -35,12 +35,6 @@
       "nifNotFoundBody": "No merchant exists with NIF {value}. Check the value and try again.",
       "emailNotFoundTitle": "User not found",
       "emailNotFoundBody": "No user exists with email {value}.",
-      "noActiveMerchantTitle": "No active merchants",
-      "noActiveMerchantBody": "User {value} has no active merchant.",
-      "pricingMissingTitle": "No plan data",
-      "pricingMissingBody": "Merchant {value} has no associated plan data. Contact the backend team.",
-      "pricingMissingAllTitle": "No plan data",
-      "pricingMissingAllBody": "None of {value}'s merchants have associated plan data.",
       "connectionTitle": "Could not connect to the API",
       "connectionBody": "Check the environment configuration and try again.",
       "unexpectedTitle": "Unexpected error",
@@ -49,13 +43,14 @@
     "picker": {
       "back": "Back to search",
       "title": "Merchants for {email}",
-      "count": "{n} merchants found",
+      "count": "Companies it owns ({n})",
       "columnMerchant": "Merchant",
       "columnNif": "NIF",
       "columnPlan": "Plan",
       "columnExpires": "Expires",
       "select": "Select",
-      "expired": "Expired"
+      "expired": "Expired",
+      "noPlanData": "No plan data"
     },
     "detail": {
       "backToSearch": "Back to search",
@@ -71,7 +66,8 @@
       "expiresOn": "Expires on",
       "expiresHint": "00:00 (Madrid time) — first day without access.",
       "active": "Active",
-      "expired": "Expired"
+      "expired": "Expired",
+      "pricingMissingNotice": "This merchant has no associated plan data."
     },
     "editor": {
       "cardTitle": "New expiration date",
@@ -114,6 +110,71 @@
       "connectionBody": "Could not reach the backend. Try again.",
       "unexpectedTitle": "Unexpected error",
       "unexpectedBody": "Could not save the change. Try again."
+    },
+    "delete": {
+      "cardTitle": "Danger zone",
+      "ownerLabel": "Owner of this account",
+      "description": "This will permanently delete the merchant(s) listed below. This action cannot be undone.",
+      "targetMerchantsTitle": "Affected companies ({n}):",
+      "openButton": "Delete account",
+      "dialog": {
+        "impactTitle": "Deletion impact",
+        "warningsTitle": "Legal warnings before continuing",
+        "confirmTitle": "Confirm deletion",
+        "loadingImpact": "Calculating deletion impact…",
+        "verifactuAck": "I understand these VERIFACTU-reported invoices must be legally retained and will not be recoverable after deletion.",
+        "thirdPartyAck": "I understand this also deletes data at other merchant(s) this user does not own, and that data will not be recoverable.",
+        "confirmWarning": "This action is irreversible. The merchant(s) listed will be permanently deleted, along with the user account.",
+        "confirmWarningSurvivor": "This action is irreversible. The merchant(s) listed will be permanently deleted, but the user account will NOT be deleted: it is still linked to other merchant(s) (see detail below).",
+        "retentionTitle": "Why the user account will not be deleted",
+        "retentionStillOwns": "Still owns:",
+        "retentionStillMemberOf": "Still a member of:",
+        "retentionUnchangedNote": "These companies and the user's access to them are NOT modified.",
+        "confirmLabel": "To confirm, type the account owner's email exactly:",
+        "cancel": "Cancel",
+        "continue": "Continue",
+        "retry": "Retry",
+        "submit": "Yes, permanently delete account",
+        "submitPending": "Deleting…"
+      },
+      "toast": {
+        "successTitle": "Account deleted",
+        "successBody": "{email}'s account and its merchants have been permanently deleted.",
+        "confirmationMismatchTitle": "Text does not match",
+        "confirmationMismatchBody": "What you typed does not exactly match the owner's email. Check it and try again.",
+        "verifactuAckRequiredTitle": "VERIFACTU acknowledgement missing",
+        "verifactuAckRequiredBody": "You must acknowledge the VERIFACTU invoice warning before continuing.",
+        "thirdPartyAckRequiredTitle": "Third-party data acknowledgement missing",
+        "thirdPartyAckRequiredBody": "You must acknowledge the warning about data at other merchants before continuing.",
+        "userNotFoundTitle": "User not found",
+        "userNotFoundBody": "This account no longer exists. It may have already been deleted.",
+        "targetSetInvalidTitle": "This merchant is no longer valid",
+        "targetSetInvalidBody": "The searched NIF no longer belongs to this user, or the merchant was deleted since this view was opened. Search again and try again.",
+        "connectionTitle": "No connection to the API",
+        "connectionBody": "Could not reach the backend. Try again.",
+        "unexpectedTitle": "Unexpected error",
+        "unexpectedBody": "Could not complete the operation. Try again."
+      }
+    },
+    "verifactu": {
+      "cleanTitle": "No VERIFACTU invoices",
+      "cleanBody": "No merchant owned by this user has invoices reported to the AEAT via VERIFACTU.",
+      "title": "{n} invoices reported to the AEAT (VERIFACTU)",
+      "retentionWarning": "Spanish law requires retaining these signed, reported invoices. They will be deleted along with the account and cannot be recovered.",
+      "byMerchantLine": "{name} ({nif}): {n} invoices"
+    },
+    "thirdParty": {
+      "cleanTitle": "No data at other merchants",
+      "cleanBody": "Deleting this account does not affect data at any merchant this user does not own.",
+      "title": "{n} rows at merchants this user does NOT own",
+      "body": "Deleting this account also deletes data at the following merchants, where this user is an employee or collaborator but not the owner:",
+      "rowsBadge": "{n} rows"
+    },
+    "impact": {
+      "rowCountsTitle": "Rows to delete, by table",
+      "rowCountsTotal": "{n} rows total",
+      "rowCountsTable": "Table",
+      "rowCountsCount": "Rows"
     }
   }
 }

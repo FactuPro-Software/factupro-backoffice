@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-interface PlanSearchFormProps {
+interface AccountSearchFormProps {
   by: 'nif' | 'email';
   q: string;
 }
@@ -28,8 +28,8 @@ function SubmitButton({ label, pendingLabel }: { label: string; pendingLabel: st
 }
 
 /** STATE 1 — always-visible search card. Plain `<form method="GET">` — URL is the state (F1). */
-export function PlanSearchForm({ by, q }: PlanSearchFormProps) {
-  const t = useTranslations('plans.search');
+export function AccountSearchForm({ by, q }: AccountSearchFormProps) {
+  const t = useTranslations('accounts.search');
   const [tab, setTab] = useState<'nif' | 'email'>(by);
   const [nifError, setNifError] = useState(false);
   const [emailError, setEmailError] = useState(false);
@@ -49,7 +49,7 @@ export function PlanSearchForm({ by, q }: PlanSearchFormProps) {
           <TabsContent value="nif">
             <form
               method="GET"
-              action="/plans"
+              action="/accounts"
               className="flex flex-col gap-2 pt-4"
               onSubmit={(event) => {
                 const input = event.currentTarget.elements.namedItem('q') as HTMLInputElement;
@@ -84,7 +84,7 @@ export function PlanSearchForm({ by, q }: PlanSearchFormProps) {
           <TabsContent value="email">
             <form
               method="GET"
-              action="/plans"
+              action="/accounts"
               className="flex flex-col gap-2 pt-4"
               onSubmit={(event) => {
                 const input = event.currentTarget.elements.namedItem('q') as HTMLInputElement;

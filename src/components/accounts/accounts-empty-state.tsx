@@ -1,9 +1,9 @@
 import { Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-/** STATE 0 — shown when `/plans` has no search query yet. */
-export function PlansEmptyState() {
-  const t = useTranslations('plans.search');
+/** STATE 0 — shown when `/accounts` has no search query yet. */
+export function AccountsEmptyState() {
+  const t = useTranslations('accounts.search');
 
   return (
     <div className="max-w-3xl rounded-lg border border-dashed p-10 text-center">
