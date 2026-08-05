@@ -2,7 +2,7 @@
   "nav": {
     "dashboard": "Panel",
     "settings": "Configuración",
-    "plans": "Planes"
+    "accounts": "Cuentas"
   },
   "header": {
     "myprofile": "Mi perfil",
@@ -13,7 +13,7 @@
     "dark": "Oscuro",
     "system": "Sistema"
   },
-  "plans": {
+  "accounts": {
     "title": "Planes",
     "subtitle": "Busca un merchant y ajusta la fecha de expiración de su plan.",
     "search": {
@@ -35,12 +35,6 @@
       "nifNotFoundBody": "No existe ningún merchant con el NIF {value}. Revisa el dato e inténtalo de nuevo.",
       "emailNotFoundTitle": "Usuario no encontrado",
       "emailNotFoundBody": "No existe ningún usuario con el email {value}.",
-      "noActiveMerchantTitle": "Sin merchants activos",
-      "noActiveMerchantBody": "El usuario {value} no tiene ningún merchant activo.",
-      "pricingMissingTitle": "Sin datos de plan",
-      "pricingMissingBody": "El merchant {value} no tiene datos de plan asociados. Contacta con el equipo de backend.",
-      "pricingMissingAllTitle": "Sin datos de plan",
-      "pricingMissingAllBody": "Ninguno de los merchants de {value} tiene datos de plan asociados.",
       "connectionTitle": "No se pudo conectar con la API",
       "connectionBody": "Revisa la configuración del entorno e inténtalo de nuevo.",
       "unexpectedTitle": "Error inesperado",
@@ -49,13 +43,14 @@
     "picker": {
       "back": "Volver a buscar",
       "title": "Merchants de {email}",
-      "count": "{n} merchants encontrados",
+      "count": "Empresas de las que es propietario/a ({n})",
       "columnMerchant": "Merchant",
       "columnNif": "NIF",
       "columnPlan": "Plan",
       "columnExpires": "Expira",
       "select": "Seleccionar",
-      "expired": "Expirado"
+      "expired": "Expirado",
+      "noPlanData": "Sin datos de plan"
     },
     "detail": {
       "backToSearch": "Volver a buscar",
@@ -71,7 +66,8 @@
       "expiresOn": "Expira el",
       "expiresHint": "00:00 (hora de Madrid) — primer día sin acceso.",
       "active": "Activo",
-      "expired": "Expirado"
+      "expired": "Expirado",
+      "pricingMissingNotice": "Este merchant no tiene datos de plan asociados."
     },
     "editor": {
       "cardTitle": "Nueva fecha de expiración",
@@ -114,6 +110,71 @@
       "connectionBody": "No se pudo contactar con el backend. Inténtalo de nuevo.",
       "unexpectedTitle": "Error inesperado",
       "unexpectedBody": "No se pudo guardar el cambio. Inténtalo de nuevo."
+    },
+    "delete": {
+      "cardTitle": "Zona de peligro",
+      "ownerLabel": "Propietario de esta cuenta",
+      "description": "Esto eliminará permanentemente los merchants indicados a continuación. Esta acción no se puede deshacer.",
+      "targetMerchantsTitle": "Empresas afectadas ({n}):",
+      "openButton": "Eliminar cuenta",
+      "dialog": {
+        "impactTitle": "Impacto de la eliminación",
+        "warningsTitle": "Avisos legales antes de continuar",
+        "confirmTitle": "Confirmar eliminación",
+        "loadingImpact": "Calculando el impacto de la eliminación…",
+        "verifactuAck": "Entiendo que estas facturas verificadas por VERIFACTU deben conservarse por ley y que no se recuperarán tras el borrado.",
+        "thirdPartyAck": "Entiendo que esto elimina también datos en otro(s) merchant(s) que este usuario no posee, y que esos datos no se recuperarán.",
+        "confirmWarning": "Esta acción es irreversible. Los merchants indicados se eliminarán de forma permanente, junto con la cuenta de usuario.",
+        "confirmWarningSurvivor": "Esta acción es irreversible. Los merchants indicados se eliminarán de forma permanente, pero la cuenta de usuario NO se eliminará: sigue vinculada a otro(s) merchant(s) (ver detalle abajo).",
+        "retentionTitle": "Por qué la cuenta de usuario no se eliminará",
+        "retentionStillOwns": "Sigue siendo propietario/a de:",
+        "retentionStillMemberOf": "Sigue siendo miembro de:",
+        "retentionUnchangedNote": "Estas empresas y el acceso del usuario a ellas NO se modifican.",
+        "confirmLabel": "Para confirmar, escribe exactamente el email del propietario de la cuenta:",
+        "cancel": "Cancelar",
+        "continue": "Continuar",
+        "retry": "Reintentar",
+        "submit": "Sí, eliminar cuenta de forma permanente",
+        "submitPending": "Eliminando…"
+      },
+      "toast": {
+        "successTitle": "Cuenta eliminada",
+        "successBody": "La cuenta de {email} y sus merchants se han eliminado permanentemente.",
+        "confirmationMismatchTitle": "El texto no coincide",
+        "confirmationMismatchBody": "Lo escrito no coincide exactamente con el email del propietario. Revísalo e inténtalo de nuevo.",
+        "verifactuAckRequiredTitle": "Falta confirmar el aviso de VERIFACTU",
+        "verifactuAckRequiredBody": "Debes reconocer el aviso sobre las facturas VERIFACTU antes de continuar.",
+        "thirdPartyAckRequiredTitle": "Falta confirmar el aviso de datos de terceros",
+        "thirdPartyAckRequiredBody": "Debes reconocer el aviso sobre datos en otros merchants antes de continuar.",
+        "userNotFoundTitle": "Usuario no encontrado",
+        "userNotFoundBody": "Esta cuenta ya no existe. Puede que ya se haya eliminado.",
+        "targetSetInvalidTitle": "El merchant ya no es válido",
+        "targetSetInvalidBody": "El NIF buscado ya no pertenece a este usuario, o el merchant fue eliminado desde que abriste esta vista. Vuelve a buscar e inténtalo de nuevo.",
+        "connectionTitle": "Sin conexión con la API",
+        "connectionBody": "No se pudo contactar con el backend. Inténtalo de nuevo.",
+        "unexpectedTitle": "Error inesperado",
+        "unexpectedBody": "No se pudo completar la operación. Inténtalo de nuevo."
+      }
+    },
+    "verifactu": {
+      "cleanTitle": "Sin facturas VERIFACTU",
+      "cleanBody": "Ningún merchant propiedad de este usuario tiene facturas reportadas a la AEAT vía VERIFACTU.",
+      "title": "{n} facturas reportadas a la AEAT (VERIFACTU)",
+      "retentionWarning": "La ley española obliga a conservar estas facturas firmadas y reportadas. Se eliminarán junto con la cuenta y no podrán recuperarse.",
+      "byMerchantLine": "{name} ({nif}): {n} facturas"
+    },
+    "thirdParty": {
+      "cleanTitle": "Sin datos en otros merchants",
+      "cleanBody": "Eliminar esta cuenta no afecta a datos de ningún merchant que este usuario no posee.",
+      "title": "{n} filas en merchants que este usuario NO posee",
+      "body": "Eliminar esta cuenta también elimina datos en los siguientes merchants, de los que este usuario es empleado o colaborador pero no propietario:",
+      "rowsBadge": "{n} filas"
+    },
+    "impact": {
+      "rowCountsTitle": "Filas a eliminar por tabla",
+      "rowCountsTotal": "{n} filas en total",
+      "rowCountsTable": "Tabla",
+      "rowCountsCount": "Filas"
     }
   }
 }

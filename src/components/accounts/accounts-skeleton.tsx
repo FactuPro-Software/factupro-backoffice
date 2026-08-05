@@ -2,7 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
 /** Suspense fallback while a search result is being fetched. */
-export function PlansSkeleton() {
+export function AccountsSkeleton() {
   return (
     <Card className="max-w-3xl">
       <CardContent className="flex flex-col gap-3">
