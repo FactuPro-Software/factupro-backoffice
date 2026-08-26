@@ -295,6 +295,8 @@ export function KitDigitalStep({ draft, errors, onChange }: StepProps) {
         <Label htmlFor="extensionPlan">{t('extensionPlan')}</Label>
         <Input
           id="extensionPlan"
+          type="date"
+          className="w-[220px]"
           value={draft.extensionPlan}
           onChange={(event) => onChange({ extensionPlan: event.target.value })}
         />

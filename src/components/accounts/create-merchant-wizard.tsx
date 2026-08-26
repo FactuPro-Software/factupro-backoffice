@@ -42,6 +42,8 @@ const FIELD_BY_ERROR_KEY: Partial<Record<string, keyof WizardDraft>> = {
   fiscalZoneNotFound: 'fiscalZone',
   verifactuCountry: 'verifactuStartDate',
   verifactuNif: 'verifactuStartDate',
+  ownerUserNotActive: 'ownerEmail',
+  ownerUserAlreadyExists: 'ownerEmail',
 };
 
 /**

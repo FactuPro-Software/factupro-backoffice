@@ -40,21 +40,19 @@ export interface CreateMerchantInput {
   acquisitionChannel: 'KIT_DIGITAL';
 }
 
-/** The merchant owner's shape as returned nested on the created `Merchant`. */
-export interface CreatedMerchantOwnerDto {
-  email: string;
-}
-
 /**
  * POST merchants response shape — the backend returns the full `Merchant`
- * entity; only the fields the wizard's tri-state result needs are modeled
- * here (merchant id, canonical NIF, name, owner email).
+ * entity, but `CreateMerchantService` returns the entity it captured BEFORE
+ * attaching the owner relation (a backend response-shape gap found via
+ * manual testing: `setOwner()`'s refetched-with-owner result is discarded),
+ * so `owner` is never actually populated here. Only model the fields that
+ * ARE reliably present; callers needing the owner's email should use the
+ * value they already submitted in `CreateMerchantInput.ownerEmail` instead.
  */
 export interface CreatedMerchantDto {
   id: string;
   nif: string;
   name: string;
-  owner: CreatedMerchantOwnerDto;
 }
 
 /** GET merchants/check-nif/:nif response shape. */

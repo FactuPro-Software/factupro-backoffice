@@ -41,6 +41,12 @@ const ERROR_KEY_BY_CODE: Record<string, string> = {
   MERCHANT_CREATE_ERROR: 'createFailed',
   MERCHANT_NOT_FOUND_ERROR: 'kitDigitalMerchantGone',
   MERCHANT_NOT_KIT_DIGITAL_ERROR: 'kitDigitalChannelMismatch',
+  // Thrown by CreateUserService when the owner email belongs to an existing,
+  // non-active user, or one already attached to a different merchant — found
+  // via manual testing against a real backend (was falling through to
+  // 'unexpected' before this map covered them).
+  MERCHANT_USER_NOT_ACTIVE_ERROR: 'ownerUserNotActive',
+  MERCHANT_USER_ALREADY_EXISTS_ERROR: 'ownerUserAlreadyExists',
 };
 
 /** Only meaningful for `create`-stage keys — `kit_digital`-stage keys always
@@ -53,6 +59,8 @@ const STEP_BY_ERROR_KEY: Record<string, number> = {
   verifactuNif: 3,
   planNotFound: 5,
   createFailed: 5,
+  ownerUserNotActive: 2,
+  ownerUserAlreadyExists: 2,
 };
 
 function resolveErrorKey(error: BackofficeApiError): string {
@@ -117,8 +125,17 @@ function buildKitDigitalInput(formData: FormData): UpdateKitDigitalInput {
   };
 }
 
+/**
+ * `ownerEmail` is taken from the SUBMITTED input, never from `created.owner`
+ * (design fix — found via manual testing against a real backend):
+ * `POST merchants` returns the `Merchant` entity captured before
+ * `CreateMerchantService` attaches the owner relation, so the response's
+ * `owner` field is never populated. We already know the email we sent; no
+ * need to trust a response shape the backend doesn't actually fill in.
+ */
 function toPartialState(
-  created: CreatedMerchantDto,
+  created: Pick<CreatedMerchantDto, 'id' | 'nif' | 'name'>,
+  ownerEmail: string,
   error: unknown,
 ): Extract<CreateMerchantState, { status: 'partial' }> {
   const errorKey = error instanceof BackofficeApiError ? resolveErrorKey(error) : 'unexpected';
@@ -128,7 +145,7 @@ function toPartialState(
     merchantId: created.id,
     nif: created.nif,
     name: created.name,
-    ownerEmail: created.owner.email,
+    ownerEmail,
     errorKey,
     fallbackMessage,
   };
@@ -174,10 +191,10 @@ export async function createKitDigitalMerchantAction(
       merchantId: created.id,
       nif: created.nif,
       name: created.name,
-      ownerEmail: created.owner.email,
+      ownerEmail: input.ownerEmail,
     };
   } catch (error) {
-    return toPartialState(created, error);
+    return toPartialState(created, input.ownerEmail, error);
   }
 }
 
@@ -201,7 +218,7 @@ export async function retryKitDigitalAction(
     await updateMerchantKitDigitalData(nif, kitDigitalInput);
     return { status: 'success', merchantId, nif, name, ownerEmail };
   } catch (error) {
-    return toPartialState({ id: merchantId, nif, name, owner: { email: ownerEmail } }, error);
+    return toPartialState({ id: merchantId, nif, name }, ownerEmail, error);
   }
 }
 

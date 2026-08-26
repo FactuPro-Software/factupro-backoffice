@@ -51,7 +51,7 @@
         "isVerifactu": "El merchant factura mediante VeriFactu",
         "verifactuStartDate": "Fecha de inicio de VeriFactu",
         "endDateDigitalKit": "Fecha de fin del Kit Digital",
-        "extensionPlan": "Plan de extensión",
+        "extensionPlan": "Fecha de prórroga del Kit Digital",
         "internalRef": "Referencia interna"
       },
       "validation": {
@@ -66,7 +66,9 @@
         "ownerLastNameRequired": "Introduce los apellidos del propietario.",
         "verifactuStartDateRequired": "Introduce la fecha de inicio de VeriFactu.",
         "verifactuStartDateInvalid": "Introduce una fecha válida (AAAA-MM-DD).",
-        "endDateDigitalKitRequired": "Introduce la fecha de fin del Kit Digital."
+        "endDateDigitalKitRequired": "Introduce la fecha de fin del Kit Digital.",
+        "ownerUserNotActive": "Ya existe un usuario con este email pero no está activo. Contacta con soporte.",
+        "ownerUserAlreadyExists": "Este usuario ya pertenece a este merchant."
       },
       "plan": {
         "label": "Plan",
@@ -108,6 +110,10 @@
         "kitDigitalMerchantGoneBody": "El merchant creado ya no existe. Contacta con soporte antes de reintentar.",
         "kitDigitalChannelMismatchTitle": "El merchant no es Kit Digital",
         "kitDigitalChannelMismatchBody": "Este merchant no está dado de alta como Kit Digital, por lo que no se pueden guardar estos datos.",
+        "ownerUserNotActiveTitle": "Usuario no activo",
+        "ownerUserNotActiveBody": "Ya existe un usuario con este email pero no está activo. Contacta con soporte antes de continuar.",
+        "ownerUserAlreadyExistsTitle": "Usuario ya vinculado",
+        "ownerUserAlreadyExistsBody": "Este usuario ya pertenece a este merchant.",
         "connectionTitle": "Sin conexión con la API",
         "connectionBody": "No se pudo contactar con el backend. Inténtalo de nuevo.",
         "unexpectedTitle": "Error inesperado",
