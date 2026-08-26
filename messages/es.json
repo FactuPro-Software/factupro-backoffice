@@ -14,8 +14,8 @@
     "system": "Sistema"
   },
   "accounts": {
-    "title": "Planes",
-    "subtitle": "Busca un merchant y ajusta la fecha de expiración de su plan.",
+    "title": "Cuentas",
+    "subtitle": "Busca un merchant, ajusta la fecha de expiración de su plan o da de alta una nueva cuenta.",
     "newAccount": "Nueva cuenta",
     "create": {
       "title": "Nueva cuenta Kit Digital",
@@ -29,8 +29,7 @@
         "step1Title": "Datos fiscales",
         "step2Title": "Datos del propietario",
         "step3Title": "VeriFactu",
-        "step4Title": "Datos del Kit Digital",
-        "step5Title": "Confirmación"
+        "step4Title": "Confirmación"
       },
       "fields": {
         "nif": "NIF",
@@ -45,14 +44,13 @@
           "peninsula": "Península y Baleares",
           "canarias": "Canarias"
         },
+        "pricingPlanExpirationDate": "Fecha de expiración del plan",
+        "pricingPlanExpirationDateHelper": "Opcional. Si se deja vacío, se usará el valor por defecto (hoy + 7 días).",
         "ownerEmail": "Email del propietario",
         "ownerFirstName": "Nombre del propietario",
         "ownerLastName": "Apellidos del propietario",
         "isVerifactu": "El merchant factura mediante VeriFactu",
-        "verifactuStartDate": "Fecha de inicio de VeriFactu",
-        "endDateDigitalKit": "Fecha de fin del Kit Digital",
-        "extensionPlan": "Fecha de prórroga del Kit Digital",
-        "internalRef": "Referencia interna"
+        "verifactuStartDate": "Fecha de inicio de VeriFactu"
       },
       "validation": {
         "nifRequired": "Introduce un NIF.",
@@ -60,13 +58,13 @@
         "nifTaken": "Ya existe un merchant con este NIF.",
         "nameRequired": "Introduce el nombre del merchant.",
         "fiscalZoneRequired": "Selecciona una zona fiscal.",
+        "pricingPlanExpirationDateInvalid": "Introduce una fecha válida (AAAA-MM-DD).",
         "ownerEmailRequired": "Introduce el email del propietario.",
         "ownerEmailInvalid": "Introduce un email válido.",
         "ownerFirstNameRequired": "Introduce el nombre del propietario.",
         "ownerLastNameRequired": "Introduce los apellidos del propietario.",
         "verifactuStartDateRequired": "Introduce la fecha de inicio de VeriFactu.",
         "verifactuStartDateInvalid": "Introduce una fecha válida (AAAA-MM-DD).",
-        "endDateDigitalKitRequired": "Introduce la fecha de fin del Kit Digital.",
         "ownerUserNotActive": "Ya existe un usuario con este email pero no está activo. Contacta con soporte.",
         "ownerUserAlreadyExists": "Este usuario ya pertenece a este merchant."
       },
@@ -78,20 +76,17 @@
         "nif": "NIF",
         "name": "Nombre",
         "fiscalZone": "Zona fiscal",
+        "pricingPlanExpirationDate": "Fecha de expiración del plan",
+        "pricingPlanExpirationDateDefault": "Por defecto (hoy + 7 días)",
         "owner": "Propietario/a",
         "verifactu": "VeriFactu",
         "verifactuEnabled": "Activado desde {date}",
         "verifactuDisabled": "Desactivado",
-        "endDateDigitalKit": "Fin del Kit Digital",
         "plan": "Plan"
       },
       "result": {
         "successTitle": "Cuenta creada",
-        "successBody": "El merchant {name} se ha creado correctamente.",
-        "partialTitle": "Cuenta creada, faltan datos del Kit Digital",
-        "partialBody": "El merchant {name} (NIF {nif}) se ha creado, pero no se pudieron guardar sus datos del Kit Digital. Reintenta la operación.",
-        "retry": "Reintentar",
-        "retryPending": "Reintentando…"
+        "successBody": "El merchant {name} se ha creado correctamente."
       },
       "toast": {
         "nifTakenTitle": "NIF ya registrado",
@@ -106,10 +101,6 @@
         "verifactuNifBody": "El NIF introducido no es válido para facturación VeriFactu.",
         "createFailedTitle": "No se pudo crear la cuenta",
         "createFailedBody": "No se pudo crear el merchant. Revisa los datos e inténtalo de nuevo.",
-        "kitDigitalMerchantGoneTitle": "El merchant ya no existe",
-        "kitDigitalMerchantGoneBody": "El merchant creado ya no existe. Contacta con soporte antes de reintentar.",
-        "kitDigitalChannelMismatchTitle": "El merchant no es Kit Digital",
-        "kitDigitalChannelMismatchBody": "Este merchant no está dado de alta como Kit Digital, por lo que no se pueden guardar estos datos.",
         "ownerUserNotActiveTitle": "Usuario no activo",
         "ownerUserNotActiveBody": "Ya existe un usuario con este email pero no está activo. Contacta con soporte antes de continuar.",
         "ownerUserAlreadyExistsTitle": "Usuario ya vinculado",

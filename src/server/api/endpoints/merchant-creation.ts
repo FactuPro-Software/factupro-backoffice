@@ -3,17 +3,22 @@ import 'server-only';
 import { backofficeApiFetch } from '../client';
 
 /**
- * Cross-checked directly against `factupro-backend`'s source (design
- * `sdd/merchant-kit-digital-creation/design`, File Changes table):
+ * Cross-checked directly against `factupro-backend`'s source:
  *   - `src/merchant/controller/backoffice-merchant.controller.ts`
  *   - `src/merchant/dto/create-merchant.dto.ts`
- *   - `src/merchant/dto/update-digital-kit-data.dto.ts`
  *   - `src/merchant/services/check-nif.service.ts`
  *
- * Only the fields the KIT_DIGITAL wizard (this change's scope, per spec
- * "Wizard Field Scope") ever sends/reads are modeled here — `CreateMerchantDto`
- * has many more optional business-profile/marketing fields on the backend that
- * this change deliberately never renders or sends.
+ * Only the fields the KIT_DIGITAL wizard actually collects are modeled here —
+ * `CreateMerchantDto` has many more optional business-profile/marketing
+ * fields on the backend that this app deliberately never renders or sends.
+ *
+ * `PATCH merchants/:nif/kit_digital` (Kit Digital subsidy tracking fields:
+ * endDateDigitalKit/extensionPlan/internalRef) is intentionally NOT bound
+ * here — the wizard creates the plan's expiration date directly via
+ * `pricingPlanExpirationDate` on the POST instead (a different field on a
+ * different table, `merchant_pricing_data.expiration_date`, not
+ * `merchant.end_date_digital_kit`). The backend endpoint itself is untouched
+ * for other callers.
  */
 
 /** Mirrors the backend's inline `PricingPlanDto` on `CreateMerchantDto`. */
@@ -23,8 +28,10 @@ export interface PricingPlanInputDto {
 
 /**
  * POST merchants request body — the subset of `CreateMerchantDto` this wizard
- * collects. `country` and `acquisitionChannel` are always sent explicitly
- * (design D8); `verifactuStartDate` is present only when `isVerifactu` is true.
+ * collects. `country` and `acquisitionChannel` are always sent explicitly;
+ * `verifactuStartDate` is present only when `isVerifactu` is true.
+ * `pricingPlanExpirationDate` sets `merchant_pricing_data.expiration_date` at
+ * creation time; omitted -> backend default (now + 7 days) applies.
  */
 export interface CreateMerchantInput {
   nif: string;
@@ -38,6 +45,7 @@ export interface CreateMerchantInput {
   verifactuStartDate?: string;
   pricingPlan: PricingPlanInputDto;
   acquisitionChannel: 'KIT_DIGITAL';
+  pricingPlanExpirationDate?: string;
 }
 
 /**
@@ -61,25 +69,9 @@ export interface CheckNifResultDto {
 }
 
 /**
- * PATCH merchants/:nif/kit_digital request body — mirrors
- * `UpdateDigitalKitDataDto` verbatim (all fields optional on the backend).
- */
-export interface UpdateKitDigitalInput {
-  endDateDigitalKit?: string;
-  extensionPlan?: string;
-  internalRef?: string;
-}
-
-/** PATCH merchants/:nif/kit_digital response shape (`SimpleActionData`). */
-export interface SimpleActionResultDto {
-  message: string;
-}
-
-/**
  * GET merchants/check-nif/:nif — case-insensitive existence check against the
- * live merchant table (design D3, "Live NIF Validation"). Advisory only: a
- * later `MERCHANT_NIF_ALREADY_EXISTS` from `createMerchant` MUST be treated
- * identically to `exists: true` here (spec "Live NIF Validation").
+ * live merchant table. Advisory only: a later `MERCHANT_NIF_ALREADY_EXISTS`
+ * from `createMerchant` MUST be treated identically to `exists: true` here.
  */
 export async function checkMerchantNif(
   nif: string,
@@ -94,30 +86,13 @@ export async function checkMerchantNif(
 
 /**
  * POST merchants — creates the merchant with `isDataMigration: false` forced
- * server-side. Not idempotent (a successful call emails the owner); the wizard
- * MUST NOT retry this call once it succeeds (design D4).
+ * server-side. Not idempotent (a successful call emails the owner); the
+ * wizard MUST NOT retry this call once it succeeds.
  */
 export async function createMerchant(input: CreateMerchantInput): Promise<CreatedMerchantDto> {
   const envelope = await backofficeApiFetch<CreatedMerchantDto>('merchants', {
     method: 'POST',
     body: input,
   });
-  return envelope.data;
-}
-
-/**
- * PATCH merchants/:nif/kit_digital — updates the Kit Digital subsidy fields
- * for an already-created merchant, addressed by its canonical NIF. Safely
- * retryable (design D4) — this is the ONLY call `retryKitDigitalAction` (PR2)
- * re-issues after a `partial` result.
- */
-export async function updateMerchantKitDigitalData(
-  nif: string,
-  input: UpdateKitDigitalInput,
-): Promise<SimpleActionResultDto> {
-  const envelope = await backofficeApiFetch<SimpleActionResultDto>(
-    `merchants/${encodeURIComponent(nif)}/kit_digital`,
-    { method: 'PATCH', body: input },
-  );
   return envelope.data;
 }

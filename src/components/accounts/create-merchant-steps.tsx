@@ -9,56 +9,52 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { PricingPlanSelect } from './pricing-plan-select';
 
 /**
- * Flat draft object holding every field across all 5 steps (design D1). Only
- * the active step is mounted; the confirm step (5) is the one place the full
- * draft is read to build both the summary AND the submitted hidden inputs, so
- * the two can never disagree.
+ * Flat draft object holding every field across all 4 steps. Only the active
+ * step is mounted; the confirm step (4) is the one place the full draft is
+ * read to build both the summary AND the submitted hidden inputs, so the two
+ * can never disagree.
  */
 export interface WizardDraft {
   nif: string;
   name: string;
   fiscalZone: string;
+  pricingPlanExpirationDate: string;
   ownerEmail: string;
   ownerFirstName: string;
   ownerLastName: string;
   isVerifactu: boolean;
   verifactuStartDate: string;
   pricingPlanName: string;
-  endDateDigitalKit: string;
-  extensionPlan: string;
-  internalRef: string;
 }
 
 export const INITIAL_DRAFT: WizardDraft = {
   nif: '',
   name: '',
   fiscalZone: '',
+  pricingPlanExpirationDate: '',
   ownerEmail: '',
   ownerFirstName: '',
   ownerLastName: '',
   isVerifactu: false,
   verifactuStartDate: '',
   pricingPlanName: 'digital_kit',
-  endDateDigitalKit: '',
-  extensionPlan: '',
-  internalRef: '',
 };
 
 /**
  * Source: `factupro-backend/src/data/scripts/helpers/fiscal-zones.helper.ts`
  * (`fiscalZonesData`) — the only two ESP fiscal zones currently seeded.
- * Hardcoded here deliberately (design Open Questions): if new zones are
- * seeded this list will drift silently, mitigated by this source-citing
- * comment and by the backend surfacing `MERCHANT_FISCAL_ZONE_NOT_FOUND` as an
- * inline step-1 error rather than a client crash.
+ * Hardcoded here deliberately: if new zones are seeded this list will drift
+ * silently, mitigated by this source-citing comment and by the backend
+ * surfacing `MERCHANT_FISCAL_ZONE_NOT_FOUND` as an inline step-1 error rather
+ * than a client crash.
  */
 export const FISCAL_ZONE_OPTIONS: { value: string; labelKey: string }[] = [
   { value: 'Peninsula', labelKey: 'peninsula' },
   { value: 'Canarias', labelKey: 'canarias' },
 ];
 
-/** Advisory-only live NIF check status (design D3). `'taken'` blocks step 1;
- * `'error'` does NOT block — the POST re-validates regardless. */
+/** Advisory-only live NIF check status. `'taken'` blocks step 1; `'error'`
+ * does NOT block — the POST re-validates regardless. */
 export type NifStatus = 'idle' | 'checking' | 'available' | 'taken' | 'error';
 
 export interface ValidateStepContext {
@@ -72,9 +68,9 @@ const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
- * Pure (design D2) — returns a map of field name -> i18n validation key
- * (under `accounts.create.validation.*`). Drives both the "Continue" gate and
- * the inline field message. `context.nifStatus` is the only non-draft input,
+ * Pure — returns a map of field name -> i18n validation key (under
+ * `accounts.create.validation.*`). Drives both the "Continue" gate and the
+ * inline field message. `context.nifStatus` is the only non-draft input,
  * kept optional so the function stays trivially callable/testable without it.
  */
 export function validateStep(
@@ -97,6 +93,9 @@ export function validateStep(
 
       if (!draft.name.trim()) errors.name = 'nameRequired';
       if (!draft.fiscalZone) errors.fiscalZone = 'fiscalZoneRequired';
+      if (draft.pricingPlanExpirationDate.trim() && !ISO_DATE_PATTERN.test(draft.pricingPlanExpirationDate.trim())) {
+        errors.pricingPlanExpirationDate = 'pricingPlanExpirationDateInvalid';
+      }
       break;
     }
     case 2: {
@@ -121,11 +120,7 @@ export function validateStep(
       }
       break;
     }
-    case 4: {
-      if (!draft.endDateDigitalKit.trim()) errors.endDateDigitalKit = 'endDateDigitalKitRequired';
-      break;
-    }
-    case 5:
+    case 4:
     default:
       break;
   }
@@ -136,13 +131,27 @@ export function validateStep(
 interface StepProps {
   draft: WizardDraft;
   errors: Record<string, string>;
+  /** Fields the operator has already interacted with (blurred, or selected
+   * for pickers) — gates whether a validation message is SHOWN. `errors`
+   * itself is still computed unconditionally so the "Continue" button stays
+   * correctly disabled before any field is touched. */
+  touched: Partial<Record<keyof WizardDraft, boolean>>;
   onChange: (patch: Partial<WizardDraft>) => void;
+  onBlur: (field: keyof WizardDraft) => void;
 }
 
-/** Step 1 — fiscal data + live NIF check (spec "Wizard Field Scope", "Live NIF Validation"). */
-export function FiscalStep({ draft, errors, onChange, nifStatus }: StepProps & { nifStatus: NifStatus }) {
+function shown(touched: StepProps['touched'], errors: StepProps['errors'], field: keyof WizardDraft) {
+  return touched[field] ? errors[field] : undefined;
+}
+
+/** Step 1 — fiscal data + live NIF check + plan expiration date. */
+export function FiscalStep({ draft, errors, touched, onChange, onBlur, nifStatus }: StepProps & { nifStatus: NifStatus }) {
   const t = useTranslations('accounts.create.fields');
   const tValidation = useTranslations('accounts.create.validation');
+  const nifError = shown(touched, errors, 'nif');
+  const nameError = shown(touched, errors, 'name');
+  const fiscalZoneError = shown(touched, errors, 'fiscalZone');
+  const expirationError = shown(touched, errors, 'pricingPlanExpirationDate');
 
   return (
     <div className="flex flex-col gap-4">
@@ -153,9 +162,10 @@ export function FiscalStep({ draft, errors, onChange, nifStatus }: StepProps & {
           autoComplete="off"
           value={draft.nif}
           onChange={(event) => onChange({ nif: event.target.value.toUpperCase() })}
+          onBlur={() => onBlur('nif')}
         />
-        {errors.nif ? (
-          <p className="text-sm text-destructive">{tValidation(errors.nif)}</p>
+        {nifError ? (
+          <p className="text-sm text-destructive">{tValidation(nifError)}</p>
         ) : nifStatus === 'checking' ? (
           <p className="text-xs text-muted-foreground">{t('nifChecking')}</p>
         ) : nifStatus === 'available' ? (
@@ -169,14 +179,25 @@ export function FiscalStep({ draft, errors, onChange, nifStatus }: StepProps & {
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="merchant-name">{t('name')}</Label>
-        <Input id="merchant-name" value={draft.name} onChange={(event) => onChange({ name: event.target.value })} />
-        {errors.name && <p className="text-sm text-destructive">{tValidation(errors.name)}</p>}
+        <Input
+          id="merchant-name"
+          value={draft.name}
+          onChange={(event) => onChange({ name: event.target.value })}
+          onBlur={() => onBlur('name')}
+        />
+        {nameError && <p className="text-sm text-destructive">{tValidation(nameError)}</p>}
       </div>
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="fiscalZone">{t('fiscalZone')}</Label>
-        <Select value={draft.fiscalZone} onValueChange={(value) => onChange({ fiscalZone: value })}>
-          <SelectTrigger id="fiscalZone" className="w-full" aria-label={t('fiscalZone')}>
+        <Select
+          value={draft.fiscalZone}
+          onValueChange={(value) => {
+            onChange({ fiscalZone: value });
+            onBlur('fiscalZone');
+          }}
+        >
+          <SelectTrigger id="fiscalZone" className="w-full" aria-label={t('fiscalZone')} onBlur={() => onBlur('fiscalZone')}>
             <SelectValue placeholder={t('fiscalZonePlaceholder')} />
           </SelectTrigger>
           <SelectContent>
@@ -187,16 +208,33 @@ export function FiscalStep({ draft, errors, onChange, nifStatus }: StepProps & {
             ))}
           </SelectContent>
         </Select>
-        {errors.fiscalZone && <p className="text-sm text-destructive">{tValidation(errors.fiscalZone)}</p>}
+        {fiscalZoneError && <p className="text-sm text-destructive">{tValidation(fiscalZoneError)}</p>}
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="pricingPlanExpirationDate">{t('pricingPlanExpirationDate')}</Label>
+        <Input
+          id="pricingPlanExpirationDate"
+          type="date"
+          className="w-[220px]"
+          value={draft.pricingPlanExpirationDate}
+          onChange={(event) => onChange({ pricingPlanExpirationDate: event.target.value })}
+          onBlur={() => onBlur('pricingPlanExpirationDate')}
+        />
+        <p className="text-xs text-muted-foreground">{t('pricingPlanExpirationDateHelper')}</p>
+        {expirationError && <p className="text-sm text-destructive">{tValidation(expirationError)}</p>}
       </div>
     </div>
   );
 }
 
-/** Step 2 — owner identity (spec "Wizard Field Scope"). */
-export function OwnerStep({ draft, errors, onChange }: StepProps) {
+/** Step 2 — owner identity. */
+export function OwnerStep({ draft, errors, touched, onChange, onBlur }: StepProps) {
   const t = useTranslations('accounts.create.fields');
   const tValidation = useTranslations('accounts.create.validation');
+  const emailError = shown(touched, errors, 'ownerEmail');
+  const firstNameError = shown(touched, errors, 'ownerFirstName');
+  const lastNameError = shown(touched, errors, 'ownerLastName');
 
   return (
     <div className="flex flex-col gap-4">
@@ -207,8 +245,9 @@ export function OwnerStep({ draft, errors, onChange }: StepProps) {
           type="email"
           value={draft.ownerEmail}
           onChange={(event) => onChange({ ownerEmail: event.target.value })}
+          onBlur={() => onBlur('ownerEmail')}
         />
-        {errors.ownerEmail && <p className="text-sm text-destructive">{tValidation(errors.ownerEmail)}</p>}
+        {emailError && <p className="text-sm text-destructive">{tValidation(emailError)}</p>}
       </div>
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="ownerFirstName">{t('ownerFirstName')}</Label>
@@ -216,8 +255,9 @@ export function OwnerStep({ draft, errors, onChange }: StepProps) {
           id="ownerFirstName"
           value={draft.ownerFirstName}
           onChange={(event) => onChange({ ownerFirstName: event.target.value })}
+          onBlur={() => onBlur('ownerFirstName')}
         />
-        {errors.ownerFirstName && <p className="text-sm text-destructive">{tValidation(errors.ownerFirstName)}</p>}
+        {firstNameError && <p className="text-sm text-destructive">{tValidation(firstNameError)}</p>}
       </div>
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="ownerLastName">{t('ownerLastName')}</Label>
@@ -225,17 +265,19 @@ export function OwnerStep({ draft, errors, onChange }: StepProps) {
           id="ownerLastName"
           value={draft.ownerLastName}
           onChange={(event) => onChange({ ownerLastName: event.target.value })}
+          onBlur={() => onBlur('ownerLastName')}
         />
-        {errors.ownerLastName && <p className="text-sm text-destructive">{tValidation(errors.ownerLastName)}</p>}
+        {lastNameError && <p className="text-sm text-destructive">{tValidation(lastNameError)}</p>}
       </div>
     </div>
   );
 }
 
-/** Step 3 — VeriFactu toggle + conditional start date (spec "Conditional VeriFactu Start Date"). */
-export function VerifactuStep({ draft, errors, onChange }: StepProps) {
+/** Step 3 — VeriFactu toggle + conditional start date. */
+export function VerifactuStep({ draft, errors, touched, onChange, onBlur }: StepProps) {
   const t = useTranslations('accounts.create.fields');
   const tValidation = useTranslations('accounts.create.validation');
+  const dateError = shown(touched, errors, 'verifactuStartDate');
 
   return (
     <div className="flex flex-col gap-4">
@@ -261,54 +303,11 @@ export function VerifactuStep({ draft, errors, onChange }: StepProps) {
             className="w-[220px]"
             value={draft.verifactuStartDate}
             onChange={(event) => onChange({ verifactuStartDate: event.target.value })}
+            onBlur={() => onBlur('verifactuStartDate')}
           />
-          {errors.verifactuStartDate && (
-            <p className="text-sm text-destructive">{tValidation(errors.verifactuStartDate)}</p>
-          )}
+          {dateError && <p className="text-sm text-destructive">{tValidation(dateError)}</p>}
         </div>
       )}
-    </div>
-  );
-}
-
-/** Step 4 — Kit Digital subsidy fields (spec "Wizard Field Scope"). */
-export function KitDigitalStep({ draft, errors, onChange }: StepProps) {
-  const t = useTranslations('accounts.create.fields');
-  const tValidation = useTranslations('accounts.create.validation');
-
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="endDateDigitalKit">{t('endDateDigitalKit')}</Label>
-        <Input
-          id="endDateDigitalKit"
-          type="date"
-          className="w-[220px]"
-          value={draft.endDateDigitalKit}
-          onChange={(event) => onChange({ endDateDigitalKit: event.target.value })}
-        />
-        {errors.endDateDigitalKit && (
-          <p className="text-sm text-destructive">{tValidation(errors.endDateDigitalKit)}</p>
-        )}
-      </div>
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="extensionPlan">{t('extensionPlan')}</Label>
-        <Input
-          id="extensionPlan"
-          type="date"
-          className="w-[220px]"
-          value={draft.extensionPlan}
-          onChange={(event) => onChange({ extensionPlan: event.target.value })}
-        />
-      </div>
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="internalRef">{t('internalRef')}</Label>
-        <Input
-          id="internalRef"
-          value={draft.internalRef}
-          onChange={(event) => onChange({ internalRef: event.target.value })}
-        />
-      </div>
     </div>
   );
 }
@@ -321,11 +320,11 @@ interface ConfirmStepProps {
 }
 
 /**
- * Step 5 — read-only summary of the ENTIRE draft plus the single `<form>`
- * (design D1) whose hidden inputs are read from the SAME `draft` object the
- * summary above renders, so the two can never disagree. This is the only
- * place `pricingPlan`'s load-bearing hidden input (D5, via `PricingPlanSelect`)
- * gets mounted.
+ * Step 4 — read-only summary of the ENTIRE draft plus the single `<form>`
+ * whose hidden inputs are read from the SAME `draft` object the summary above
+ * renders, so the two can never disagree. This is the only place
+ * `pricingPlan`'s load-bearing hidden input (via `PricingPlanSelect`) gets
+ * mounted.
  */
 export function ConfirmStep({ draft, formId, formAction, onPlanChange }: ConfirmStepProps) {
   const t = useTranslations('accounts.create.summary');
@@ -335,6 +334,9 @@ export function ConfirmStep({ draft, formId, formAction, onPlanChange }: Confirm
       <input type="hidden" name="nif" value={draft.nif} />
       <input type="hidden" name="name" value={draft.name} />
       <input type="hidden" name="fiscalZone" value={draft.fiscalZone} />
+      {draft.pricingPlanExpirationDate && (
+        <input type="hidden" name="pricingPlanExpirationDate" value={draft.pricingPlanExpirationDate} />
+      )}
       <input type="hidden" name="ownerEmail" value={draft.ownerEmail} />
       <input type="hidden" name="ownerFirstName" value={draft.ownerFirstName} />
       <input type="hidden" name="ownerLastName" value={draft.ownerLastName} />
@@ -342,9 +344,6 @@ export function ConfirmStep({ draft, formId, formAction, onPlanChange }: Confirm
       {draft.isVerifactu && (
         <input type="hidden" name="verifactuStartDate" value={draft.verifactuStartDate} />
       )}
-      <input type="hidden" name="endDateDigitalKit" value={draft.endDateDigitalKit} />
-      <input type="hidden" name="extensionPlan" value={draft.extensionPlan} />
-      <input type="hidden" name="internalRef" value={draft.internalRef} />
 
       <dl className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
         <div>
@@ -360,6 +359,10 @@ export function ConfirmStep({ draft, formId, formAction, onPlanChange }: Confirm
           <dd className="text-sm">{draft.fiscalZone}</dd>
         </div>
         <div>
+          <dt className="text-xs text-muted-foreground">{t('pricingPlanExpirationDate')}</dt>
+          <dd className="text-sm">{draft.pricingPlanExpirationDate || t('pricingPlanExpirationDateDefault')}</dd>
+        </div>
+        <div>
           <dt className="text-xs text-muted-foreground">{t('owner')}</dt>
           <dd className="text-sm">
             {draft.ownerFirstName} {draft.ownerLastName} ({draft.ownerEmail})
@@ -370,10 +373,6 @@ export function ConfirmStep({ draft, formId, formAction, onPlanChange }: Confirm
           <dd className="text-sm">
             {draft.isVerifactu ? t('verifactuEnabled', { date: draft.verifactuStartDate }) : t('verifactuDisabled')}
           </dd>
-        </div>
-        <div>
-          <dt className="text-xs text-muted-foreground">{t('endDateDigitalKit')}</dt>
-          <dd className="text-sm">{draft.endDateDigitalKit || '—'}</dd>
         </div>
       </dl>
 

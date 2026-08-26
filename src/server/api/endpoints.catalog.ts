@@ -258,7 +258,6 @@ export const BACKOFFICE_ENDPOINTS = [
     purpose: 'Update Kit Digital subsidy fields (end date, extension plan, internal ref)',
     kind: 'admin',
     requiresApiKey: true,
-    bound: true,
   },
   {
     controller: 'merchants',
