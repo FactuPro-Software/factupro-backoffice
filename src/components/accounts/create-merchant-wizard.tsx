@@ -231,11 +231,22 @@ export function CreateMerchantWizard() {
           {t('back')}
         </Button>
         {step < TOTAL_STEPS ? (
-          <Button type="button" onClick={() => setStep((current) => current + 1)} disabled={!canContinue}>
+          // Distinct `key` from the submit button below (design D-fix): without it, React
+          // mutates type="button" -> type="submit" on the SAME DOM node when `step` reaches
+          // TOTAL_STEPS, and browsers resolve a click's default action against the button's
+          // type at the end of the event, not at click time — so the very click that was
+          // meant to just advance the step ends up auto-submitting the form. A distinct key
+          // forces an unmount/remount instead of an in-place attribute mutation.
+          <Button
+            key="continue"
+            type="button"
+            onClick={() => setStep((current) => current + 1)}
+            disabled={!canContinue}
+          >
             {t('continue')}
           </Button>
         ) : (
-          <Button type="submit" form={CREATE_FORM_ID} disabled={isCreating}>
+          <Button key="submit" type="submit" form={CREATE_FORM_ID} disabled={isCreating}>
             {isCreating ? (
               <>
                 <Loader2 className="animate-spin" />

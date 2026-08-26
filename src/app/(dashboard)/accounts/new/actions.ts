@@ -9,7 +9,7 @@ import {
   type UpdateKitDigitalInput,
 } from '@/server/api/endpoints/merchant-creation';
 import { BackofficeApiError } from '@/server/api/errors';
-import { PRICING_PLAN_OPTIONS } from '@/components/accounts/pricing-plan-select';
+import { PRICING_PLAN_OPTIONS } from '@/components/accounts/pricing-plan-options';
 
 export type CreateMerchantState =
   | { status: 'idle' }

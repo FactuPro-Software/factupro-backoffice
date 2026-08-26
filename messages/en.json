@@ -16,6 +16,106 @@
   "accounts": {
     "title": "Plans",
     "subtitle": "Search for a merchant and adjust their plan expiration date.",
+    "newAccount": "New account",
+    "create": {
+      "title": "New Kit Digital account",
+      "subtitle": "Create a new merchant under the Kit Digital program and record its subsidy data.",
+      "backToAccounts": "Back to accounts",
+      "back": "Back",
+      "continue": "Continue",
+      "submit": "Create account",
+      "submitPending": "Creating…",
+      "steps": {
+        "step1Title": "Fiscal details",
+        "step2Title": "Owner details",
+        "step3Title": "VeriFactu",
+        "step4Title": "Kit Digital details",
+        "step5Title": "Confirmation"
+      },
+      "fields": {
+        "nif": "NIF",
+        "nifHelper": "9 alphanumeric characters, no spaces.",
+        "nifChecking": "Checking availability…",
+        "nifAvailable": "NIF available.",
+        "nifCheckUnavailable": "Could not check the NIF right now. You can continue; it will be validated again when the account is created.",
+        "name": "Merchant name",
+        "fiscalZone": "Fiscal zone",
+        "fiscalZonePlaceholder": "Select a fiscal zone",
+        "fiscalZoneOptions": {
+          "peninsula": "Mainland and Balearic Islands",
+          "canarias": "Canary Islands"
+        },
+        "ownerEmail": "Owner email",
+        "ownerFirstName": "Owner first name",
+        "ownerLastName": "Owner last name",
+        "isVerifactu": "This merchant invoices through VeriFactu",
+        "verifactuStartDate": "VeriFactu start date",
+        "endDateDigitalKit": "Kit Digital end date",
+        "extensionPlan": "Extension plan",
+        "internalRef": "Internal reference"
+      },
+      "validation": {
+        "nifRequired": "Enter a NIF.",
+        "nifInvalid": "The NIF must be 9 alphanumeric characters.",
+        "nifTaken": "A merchant with this NIF already exists.",
+        "nameRequired": "Enter the merchant name.",
+        "fiscalZoneRequired": "Select a fiscal zone.",
+        "ownerEmailRequired": "Enter the owner's email.",
+        "ownerEmailInvalid": "Enter a valid email.",
+        "ownerFirstNameRequired": "Enter the owner's first name.",
+        "ownerLastNameRequired": "Enter the owner's last name.",
+        "verifactuStartDateRequired": "Enter the VeriFactu start date.",
+        "verifactuStartDateInvalid": "Enter a valid date (YYYY-MM-DD).",
+        "endDateDigitalKitRequired": "Enter the Kit Digital end date."
+      },
+      "plan": {
+        "label": "Plan",
+        "digitalKit": "Kit Digital"
+      },
+      "summary": {
+        "nif": "NIF",
+        "name": "Name",
+        "fiscalZone": "Fiscal zone",
+        "owner": "Owner",
+        "verifactu": "VeriFactu",
+        "verifactuEnabled": "Enabled since {date}",
+        "verifactuDisabled": "Disabled",
+        "endDateDigitalKit": "Kit Digital end date",
+        "plan": "Plan"
+      },
+      "result": {
+        "successTitle": "Account created",
+        "successBody": "Merchant {name} was created successfully.",
+        "partialTitle": "Account created, Kit Digital data missing",
+        "partialBody": "Merchant {name} (NIF {nif}) was created, but its Kit Digital data could not be saved. Retry the operation.",
+        "retry": "Retry",
+        "retryPending": "Retrying…"
+      },
+      "toast": {
+        "nifTakenTitle": "NIF already registered",
+        "nifTakenBody": "A merchant with this NIF already exists. Check the value.",
+        "fiscalZoneNotFoundTitle": "Invalid fiscal zone",
+        "fiscalZoneNotFoundBody": "The selected fiscal zone does not exist. Select another and try again.",
+        "planNotFoundTitle": "Plan not found",
+        "planNotFoundBody": "The Kit Digital plan is not currently available. Contact support.",
+        "verifactuCountryTitle": "Invalid country for VeriFactu",
+        "verifactuCountryBody": "The configured country is not compatible with VeriFactu.",
+        "verifactuNifTitle": "Invalid NIF for VeriFactu",
+        "verifactuNifBody": "The entered NIF is not valid for VeriFactu invoicing.",
+        "createFailedTitle": "Could not create the account",
+        "createFailedBody": "Could not create the merchant. Check the data and try again.",
+        "kitDigitalMerchantGoneTitle": "Merchant no longer exists",
+        "kitDigitalMerchantGoneBody": "The created merchant no longer exists. Contact support before retrying.",
+        "kitDigitalChannelMismatchTitle": "Merchant is not Kit Digital",
+        "kitDigitalChannelMismatchBody": "This merchant is not registered as Kit Digital, so this data cannot be saved.",
+        "connectionTitle": "No connection to the API",
+        "connectionBody": "Could not reach the backend. Try again.",
+        "unexpectedTitle": "Unexpected error",
+        "unexpectedBody": "Could not complete the operation. Try again.",
+        "successTitle": "Account created",
+        "successBody": "Merchant {name} was created successfully."
+      }
+    },
     "search": {
       "title": "Search merchant",
       "tabNif": "NIF",
