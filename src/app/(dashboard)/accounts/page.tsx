@@ -1,8 +1,11 @@
+import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
+import Link from 'next/link';
 import { Suspense } from 'react';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import { MerchantPickerTable } from '@/components/accounts/merchant-picker-table';
 import { AccountDetail } from '@/components/accounts/account-detail';
 import { DeleteAccountCard } from '@/components/accounts/delete-account-card';
@@ -165,8 +168,18 @@ export default async function PlansPage({ searchParams }: PlansPageProps) {
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-6">
-      <h1 className="text-2xl font-semibold">{t('title')}</h1>
-      <p className="text-muted-foreground">{t('subtitle')}</p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold">{t('title')}</h1>
+          <p className="text-muted-foreground">{t('subtitle')}</p>
+        </div>
+        <Button asChild>
+          <Link href="/accounts/new">
+            <Plus />
+            {t('newAccount')}
+          </Link>
+        </Button>
+      </div>
 
       <AccountSearchForm by={by} q={q} />
 
