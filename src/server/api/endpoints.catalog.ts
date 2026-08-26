@@ -224,6 +224,7 @@ export const BACKOFFICE_ENDPOINTS = [
     purpose: 'Check NIF availability',
     kind: 'admin',
     requiresApiKey: true,
+    bound: true,
   },
   {
     controller: 'merchants',
@@ -232,6 +233,7 @@ export const BACKOFFICE_ENDPOINTS = [
     purpose: 'Create merchant',
     kind: 'admin',
     requiresApiKey: true,
+    bound: true,
   },
   {
     controller: 'merchants',
@@ -253,7 +255,7 @@ export const BACKOFFICE_ENDPOINTS = [
     controller: 'merchants',
     method: 'PATCH',
     path: 'merchants/:nif/kit_digital',
-    purpose: 'Update Kit Digital flag',
+    purpose: 'Update Kit Digital subsidy fields (end date, extension plan, internal ref)',
     kind: 'admin',
     requiresApiKey: true,
   },

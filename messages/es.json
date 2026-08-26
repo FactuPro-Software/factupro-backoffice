@@ -14,8 +14,105 @@
     "system": "Sistema"
   },
   "accounts": {
-    "title": "Planes",
-    "subtitle": "Busca un merchant y ajusta la fecha de expiración de su plan.",
+    "title": "Cuentas",
+    "subtitle": "Busca un merchant, ajusta la fecha de expiración de su plan o da de alta una nueva cuenta.",
+    "newAccount": "Nueva cuenta",
+    "create": {
+      "title": "Nueva cuenta Kit Digital",
+      "subtitle": "Crea un nuevo merchant acogido al Kit Digital y registra sus datos de subvención.",
+      "backToAccounts": "Volver a cuentas",
+      "back": "Atrás",
+      "continue": "Continuar",
+      "submit": "Crear cuenta",
+      "submitPending": "Creando…",
+      "steps": {
+        "step1Title": "Datos fiscales",
+        "step2Title": "Datos del propietario",
+        "step3Title": "VeriFactu",
+        "step4Title": "Confirmación"
+      },
+      "fields": {
+        "nif": "NIF",
+        "nifHelper": "9 caracteres alfanuméricos, sin espacios.",
+        "nifChecking": "Comprobando disponibilidad…",
+        "nifAvailable": "NIF disponible.",
+        "nifCheckUnavailable": "No se pudo comprobar el NIF ahora mismo. Puedes continuar; se validará de nuevo al crear la cuenta.",
+        "name": "Nombre del merchant",
+        "fiscalZone": "Zona fiscal",
+        "fiscalZonePlaceholder": "Selecciona una zona fiscal",
+        "fiscalZoneOptions": {
+          "peninsula": "Península y Baleares",
+          "canarias": "Canarias"
+        },
+        "pricingPlanExpirationDate": "Fecha de expiración del plan",
+        "pricingPlanExpirationDateHelper": "Opcional. Si se deja vacío, se usará el valor por defecto (hoy + 7 días).",
+        "ownerEmail": "Email del propietario",
+        "ownerFirstName": "Nombre del propietario",
+        "ownerLastName": "Apellidos del propietario",
+        "isVerifactu": "El merchant factura mediante VeriFactu",
+        "verifactuStartDate": "Fecha de inicio de VeriFactu"
+      },
+      "validation": {
+        "nifRequired": "Introduce un NIF.",
+        "nifInvalid": "El NIF debe tener 9 caracteres alfanuméricos.",
+        "nifTaken": "Ya existe un merchant con este NIF.",
+        "nameRequired": "Introduce el nombre del merchant.",
+        "fiscalZoneRequired": "Selecciona una zona fiscal.",
+        "pricingPlanExpirationDateInvalid": "Introduce una fecha válida (AAAA-MM-DD).",
+        "ownerEmailRequired": "Introduce el email del propietario.",
+        "ownerEmailInvalid": "Introduce un email válido.",
+        "ownerFirstNameRequired": "Introduce el nombre del propietario.",
+        "ownerLastNameRequired": "Introduce los apellidos del propietario.",
+        "verifactuStartDateRequired": "Introduce la fecha de inicio de VeriFactu.",
+        "verifactuStartDateInvalid": "Introduce una fecha válida (AAAA-MM-DD).",
+        "ownerUserNotActive": "Ya existe un usuario con este email pero no está activo. Contacta con soporte.",
+        "ownerUserAlreadyExists": "Este usuario ya pertenece a este merchant."
+      },
+      "plan": {
+        "label": "Plan",
+        "digitalKit": "Kit Digital"
+      },
+      "summary": {
+        "nif": "NIF",
+        "name": "Nombre",
+        "fiscalZone": "Zona fiscal",
+        "pricingPlanExpirationDate": "Fecha de expiración del plan",
+        "pricingPlanExpirationDateDefault": "Por defecto (hoy + 7 días)",
+        "owner": "Propietario/a",
+        "verifactu": "VeriFactu",
+        "verifactuEnabled": "Activado desde {date}",
+        "verifactuDisabled": "Desactivado",
+        "plan": "Plan"
+      },
+      "result": {
+        "successTitle": "Cuenta creada",
+        "successBody": "El merchant {name} se ha creado correctamente."
+      },
+      "toast": {
+        "nifTakenTitle": "NIF ya registrado",
+        "nifTakenBody": "Ya existe un merchant con este NIF. Revisa el dato.",
+        "fiscalZoneNotFoundTitle": "Zona fiscal no válida",
+        "fiscalZoneNotFoundBody": "La zona fiscal seleccionada no existe. Selecciona otra e inténtalo de nuevo.",
+        "planNotFoundTitle": "Plan no encontrado",
+        "planNotFoundBody": "El plan Kit Digital no está disponible en este momento. Contacta con soporte.",
+        "verifactuCountryTitle": "País no válido para VeriFactu",
+        "verifactuCountryBody": "El país configurado no es compatible con VeriFactu.",
+        "verifactuNifTitle": "NIF no válido para VeriFactu",
+        "verifactuNifBody": "El NIF introducido no es válido para facturación VeriFactu.",
+        "createFailedTitle": "No se pudo crear la cuenta",
+        "createFailedBody": "No se pudo crear el merchant. Revisa los datos e inténtalo de nuevo.",
+        "ownerUserNotActiveTitle": "Usuario no activo",
+        "ownerUserNotActiveBody": "Ya existe un usuario con este email pero no está activo. Contacta con soporte antes de continuar.",
+        "ownerUserAlreadyExistsTitle": "Usuario ya vinculado",
+        "ownerUserAlreadyExistsBody": "Este usuario ya pertenece a este merchant.",
+        "connectionTitle": "Sin conexión con la API",
+        "connectionBody": "No se pudo contactar con el backend. Inténtalo de nuevo.",
+        "unexpectedTitle": "Error inesperado",
+        "unexpectedBody": "No se pudo completar la operación. Inténtalo de nuevo.",
+        "successTitle": "Cuenta creada",
+        "successBody": "El merchant {name} se ha creado correctamente."
+      }
+    },
     "search": {
       "title": "Buscar merchant",
       "tabNif": "NIF",

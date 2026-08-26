@@ -14,8 +14,105 @@
     "system": "System"
   },
   "accounts": {
-    "title": "Plans",
-    "subtitle": "Search for a merchant and adjust their plan expiration date.",
+    "title": "Accounts",
+    "subtitle": "Search for a merchant, adjust their plan expiration date, or create a new account.",
+    "newAccount": "New account",
+    "create": {
+      "title": "New Kit Digital account",
+      "subtitle": "Create a new merchant under the Kit Digital program and record its subsidy data.",
+      "backToAccounts": "Back to accounts",
+      "back": "Back",
+      "continue": "Continue",
+      "submit": "Create account",
+      "submitPending": "Creating…",
+      "steps": {
+        "step1Title": "Fiscal details",
+        "step2Title": "Owner details",
+        "step3Title": "VeriFactu",
+        "step4Title": "Confirmation"
+      },
+      "fields": {
+        "nif": "NIF",
+        "nifHelper": "9 alphanumeric characters, no spaces.",
+        "nifChecking": "Checking availability…",
+        "nifAvailable": "NIF available.",
+        "nifCheckUnavailable": "Could not check the NIF right now. You can continue; it will be validated again when the account is created.",
+        "name": "Merchant name",
+        "fiscalZone": "Fiscal zone",
+        "fiscalZonePlaceholder": "Select a fiscal zone",
+        "fiscalZoneOptions": {
+          "peninsula": "Mainland and Balearic Islands",
+          "canarias": "Canary Islands"
+        },
+        "pricingPlanExpirationDate": "Plan expiration date",
+        "pricingPlanExpirationDateHelper": "Optional. If left empty, the default value (today + 7 days) is used.",
+        "ownerEmail": "Owner email",
+        "ownerFirstName": "Owner first name",
+        "ownerLastName": "Owner last name",
+        "isVerifactu": "This merchant invoices through VeriFactu",
+        "verifactuStartDate": "VeriFactu start date"
+      },
+      "validation": {
+        "nifRequired": "Enter a NIF.",
+        "nifInvalid": "The NIF must be 9 alphanumeric characters.",
+        "nifTaken": "A merchant with this NIF already exists.",
+        "nameRequired": "Enter the merchant name.",
+        "fiscalZoneRequired": "Select a fiscal zone.",
+        "pricingPlanExpirationDateInvalid": "Enter a valid date (YYYY-MM-DD).",
+        "ownerEmailRequired": "Enter the owner's email.",
+        "ownerEmailInvalid": "Enter a valid email.",
+        "ownerFirstNameRequired": "Enter the owner's first name.",
+        "ownerLastNameRequired": "Enter the owner's last name.",
+        "verifactuStartDateRequired": "Enter the VeriFactu start date.",
+        "verifactuStartDateInvalid": "Enter a valid date (YYYY-MM-DD).",
+        "ownerUserNotActive": "A user with this email already exists but is not active. Contact support.",
+        "ownerUserAlreadyExists": "This user already belongs to this merchant."
+      },
+      "plan": {
+        "label": "Plan",
+        "digitalKit": "Kit Digital"
+      },
+      "summary": {
+        "nif": "NIF",
+        "name": "Name",
+        "fiscalZone": "Fiscal zone",
+        "pricingPlanExpirationDate": "Plan expiration date",
+        "pricingPlanExpirationDateDefault": "Default (today + 7 days)",
+        "owner": "Owner",
+        "verifactu": "VeriFactu",
+        "verifactuEnabled": "Enabled since {date}",
+        "verifactuDisabled": "Disabled",
+        "plan": "Plan"
+      },
+      "result": {
+        "successTitle": "Account created",
+        "successBody": "Merchant {name} was created successfully."
+      },
+      "toast": {
+        "nifTakenTitle": "NIF already registered",
+        "nifTakenBody": "A merchant with this NIF already exists. Check the value.",
+        "fiscalZoneNotFoundTitle": "Invalid fiscal zone",
+        "fiscalZoneNotFoundBody": "The selected fiscal zone does not exist. Select another and try again.",
+        "planNotFoundTitle": "Plan not found",
+        "planNotFoundBody": "The Kit Digital plan is not currently available. Contact support.",
+        "verifactuCountryTitle": "Invalid country for VeriFactu",
+        "verifactuCountryBody": "The configured country is not compatible with VeriFactu.",
+        "verifactuNifTitle": "Invalid NIF for VeriFactu",
+        "verifactuNifBody": "The entered NIF is not valid for VeriFactu invoicing.",
+        "createFailedTitle": "Could not create the account",
+        "createFailedBody": "Could not create the merchant. Check the data and try again.",
+        "ownerUserNotActiveTitle": "User not active",
+        "ownerUserNotActiveBody": "A user with this email already exists but is not active. Contact support before continuing.",
+        "ownerUserAlreadyExistsTitle": "User already linked",
+        "ownerUserAlreadyExistsBody": "This user already belongs to this merchant.",
+        "connectionTitle": "No connection to the API",
+        "connectionBody": "Could not reach the backend. Try again.",
+        "unexpectedTitle": "Unexpected error",
+        "unexpectedBody": "Could not complete the operation. Try again.",
+        "successTitle": "Account created",
+        "successBody": "Merchant {name} was created successfully."
+      }
+    },
     "search": {
       "title": "Search merchant",
       "tabNif": "NIF",

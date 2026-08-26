@@ -1,0 +1,228 @@
+'use client';
+
+import { CheckCircle2, Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
+import { useActionState, useEffect, useRef, useState, useTransition } from 'react';
+import { toast } from 'sonner';
+
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  createKitDigitalMerchantAction,
+  checkNifAction,
+  type CreateMerchantState,
+} from '@/app/(dashboard)/accounts/new/actions';
+import {
+  ConfirmStep,
+  FiscalStep,
+  INITIAL_DRAFT,
+  NIF_SYNTAX_PATTERN,
+  OwnerStep,
+  VerifactuStep,
+  validateStep,
+  type NifStatus,
+  type WizardDraft,
+} from './create-merchant-steps';
+
+const INITIAL_STATE: CreateMerchantState = { status: 'idle' };
+const CREATE_FORM_ID = 'create-merchant-form';
+const NIF_CHECK_DEBOUNCE_MS = 400;
+const TOTAL_STEPS = 4;
+
+/** Only codes with a natural field home get one; the rest (`planNotFound`,
+ * `createFailed`, `connection`, `unexpected`) surface as a generic, non-field
+ * alert on the step the operator was returned to. */
+const FIELD_BY_ERROR_KEY: Partial<Record<string, keyof WizardDraft>> = {
+  nifTaken: 'nif',
+  fiscalZoneNotFound: 'fiscalZone',
+  verifactuCountry: 'verifactuStartDate',
+  verifactuNif: 'verifactuStartDate',
+  ownerUserNotActive: 'ownerEmail',
+  ownerUserAlreadyExists: 'ownerEmail',
+};
+
+/**
+ * Wizard shell. Holds the single flat `WizardDraft`; only the active step is
+ * mounted. Live NIF check runs through a 400ms debounce with a monotonic
+ * request-id guard since server actions cannot be aborted with
+ * `AbortSignal`. The confirmation step's single `<form>` is bound to
+ * `createKitDigitalMerchantAction` — one POST call, no follow-up PATCH.
+ */
+export function CreateMerchantWizard() {
+  const t = useTranslations('accounts.create');
+  const tToast = useTranslations('accounts.create.toast');
+  const router = useRouter();
+
+  const [draft, setDraft] = useState<WizardDraft>(INITIAL_DRAFT);
+  const [step, setStep] = useState(1);
+  const [nifStatus, setNifStatus] = useState<NifStatus>('idle');
+  // Fields the operator has interacted with — a required-field error only
+  // renders after its own field is touched, never on first mount.
+  const [touched, setTouched] = useState<Partial<Record<keyof WizardDraft, boolean>>>({});
+
+  const [, startNifCheck] = useTransition();
+  const nifRequestIdRef = useRef(0);
+  const nifDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const [result, createFormAction, isCreating] = useActionState(createKitDigitalMerchantAction, INITIAL_STATE);
+
+  function updateDraft(patch: Partial<WizardDraft>) {
+    setDraft((prev) => ({ ...prev, ...patch }));
+  }
+
+  function markTouched(field: keyof WizardDraft) {
+    setTouched((prev) => (prev[field] ? prev : { ...prev, [field]: true }));
+  }
+
+  // Debounced, latest-wins live NIF check.
+  useEffect(() => {
+    const nif = draft.nif.trim();
+    if (nifDebounceRef.current) clearTimeout(nifDebounceRef.current);
+
+    if (!NIF_SYNTAX_PATTERN.test(nif)) {
+      setNifStatus('idle');
+      return;
+    }
+
+    setNifStatus('checking');
+    nifDebounceRef.current = setTimeout(() => {
+      const requestId = ++nifRequestIdRef.current;
+      startNifCheck(async () => {
+        const checkResult = await checkNifAction(nif);
+        // Latest-wins guard — a newer keystroke already superseded this request.
+        if (requestId !== nifRequestIdRef.current) return;
+        if ('errorKey' in checkResult) {
+          setNifStatus('error'); // advisory only — never blocks
+        } else {
+          setNifStatus(checkResult.exists ? 'taken' : 'available');
+        }
+      });
+    }, NIF_CHECK_DEBOUNCE_MS);
+
+    return () => {
+      if (nifDebounceRef.current) clearTimeout(nifDebounceRef.current);
+    };
+  }, [draft.nif]);
+
+  // Jump to the offending step / surface a toast whenever a server result arrives.
+  useEffect(() => {
+    if (result.status === 'error') {
+      setStep(result.step);
+      if (result.errorKey === 'nifTaken') setNifStatus('taken');
+      const field = FIELD_BY_ERROR_KEY[result.errorKey];
+      if (field) markTouched(field);
+      toast.error(tToast(`${result.errorKey}Title`), { description: tToast(`${result.errorKey}Body`) });
+    } else if (result.status === 'success') {
+      toast.success(tToast('successTitle'), { description: tToast('successBody', { name: result.name }) });
+      router.replace(`/accounts?by=nif&q=${encodeURIComponent(result.nif)}`);
+    }
+  }, [result]);
+
+  if (result.status === 'success') {
+    return (
+      <Card className="max-w-2xl">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CheckCircle2 className="text-emerald-600" />
+            {t('result.successTitle')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">{t('result.successBody', { name: result.name })}</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const stepErrors = validateStep(step, draft, { nifStatus });
+  const serverFieldErrors: Record<string, string> = {};
+  if (result.status === 'error' && result.step === step) {
+    const field = FIELD_BY_ERROR_KEY[result.errorKey];
+    if (field) serverFieldErrors[field] = result.errorKey;
+  }
+  const errors = { ...stepErrors, ...serverFieldErrors };
+  const canContinue = Object.keys(stepErrors).length === 0;
+
+  const showGenericStepError =
+    result.status === 'error' && result.step === step && !FIELD_BY_ERROR_KEY[result.errorKey];
+
+  return (
+    <Card className="max-w-2xl">
+      <CardHeader>
+        <CardTitle>{t(`steps.step${step}Title`)}</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        {showGenericStepError && result.status === 'error' && (
+          <Alert variant="destructive">
+            <AlertTitle>{tToast(`${result.errorKey}Title`)}</AlertTitle>
+            <AlertDescription>{tToast(`${result.errorKey}Body`)}</AlertDescription>
+          </Alert>
+        )}
+
+        {step === 1 && (
+          <FiscalStep
+            draft={draft}
+            errors={errors}
+            touched={touched}
+            onChange={updateDraft}
+            onBlur={markTouched}
+            nifStatus={nifStatus}
+          />
+        )}
+        {step === 2 && (
+          <OwnerStep draft={draft} errors={errors} touched={touched} onChange={updateDraft} onBlur={markTouched} />
+        )}
+        {step === 3 && (
+          <VerifactuStep draft={draft} errors={errors} touched={touched} onChange={updateDraft} onBlur={markTouched} />
+        )}
+        {step === 4 && (
+          <ConfirmStep
+            draft={draft}
+            formId={CREATE_FORM_ID}
+            formAction={createFormAction}
+            onPlanChange={(value) => updateDraft({ pricingPlanName: value })}
+          />
+        )}
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => setStep((current) => current - 1)}
+          disabled={step === 1 || isCreating}
+        >
+          {t('back')}
+        </Button>
+        {step < TOTAL_STEPS ? (
+          // Distinct `key` from the submit button below: without it, React
+          // mutates type="button" -> type="submit" on the SAME DOM node when `step` reaches
+          // TOTAL_STEPS, and browsers resolve a click's default action against the button's
+          // type at the end of the event, not at click time — so the very click that was
+          // meant to just advance the step ends up auto-submitting the form. A distinct key
+          // forces an unmount/remount instead of an in-place attribute mutation.
+          <Button
+            key="continue"
+            type="button"
+            onClick={() => setStep((current) => current + 1)}
+            disabled={!canContinue}
+          >
+            {t('continue')}
+          </Button>
+        ) : (
+          <Button key="submit" type="submit" form={CREATE_FORM_ID} disabled={isCreating}>
+            {isCreating ? (
+              <>
+                <Loader2 className="animate-spin" />
+                {t('submitPending')}
+              </>
+            ) : (
+              t('submit')
+            )}
+          </Button>
+        )}
+      </CardFooter>
+    </Card>
+  );
+}
