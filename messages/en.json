@@ -214,6 +214,11 @@
       "description": "This will permanently delete the merchant(s) listed below. This action cannot be undone.",
       "targetMerchantsTitle": "Affected companies ({n}):",
       "openButton": "Delete account",
+      "planBlocked": {
+        "title": "Deletion blocked by pricing plan",
+        "description": "This account cannot be deleted because it includes one or more merchants on a non-editable pricing plan. Change their plan before continuing:",
+        "unknownPlan": "no plan"
+      },
       "dialog": {
         "impactTitle": "Deletion impact",
         "warningsTitle": "Legal warnings before continuing",
@@ -247,6 +252,8 @@
         "userNotFoundBody": "This account no longer exists. It may have already been deleted.",
         "targetSetInvalidTitle": "This merchant is no longer valid",
         "targetSetInvalidBody": "The searched NIF no longer belongs to this user, or the merchant was deleted since this view was opened. Search again and try again.",
+        "planBlockedTitle": "Deletion blocked by pricing plan",
+        "planBlockedBody": "One or more merchants on this account are on a non-editable pricing plan. Change their plan before deleting the account.",
         "connectionTitle": "No connection to the API",
         "connectionBody": "Could not reach the backend. Try again.",
         "unexpectedTitle": "Unexpected error",

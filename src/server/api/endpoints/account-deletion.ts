@@ -98,6 +98,17 @@ export interface BackofficeVerifactuExposureDto {
   byMerchant: BackofficeVerifactuMerchantExposureDto[];
 }
 
+/** account-deletion-plan-guard (D1) — matches the backend's `BlockedPlanMerchant`
+ * (mirrors `MerchantSummary` plus WHY the merchant blocks). `pricingPlanName` is
+ * `null` when the merchant has no `merchant_pricing_data` row (or no plan on it)
+ * — fail-closed: still blocking, no distinct "data anomaly" wording anywhere. */
+export interface BackofficeBlockedPlanMerchantDto {
+  id: string;
+  name: string;
+  nif: string | null;
+  pricingPlanName: string | null;
+}
+
 /** GET account-deletion/:userId/impact response shape. */
 export interface BackofficeAccountDeletionImpactDto {
   user: BackofficeAccountOwnerDto;
@@ -116,6 +127,13 @@ export interface BackofficeAccountDeletionImpactDto {
   thirdPartyExposure: BackofficeThirdPartyExposureDto;
   /** Exact string to retype (D11). Always `user.email`. */
   confirmationToken: string;
+  /** account-deletion-plan-guard (D1) — true when ANY target merchant is on a
+   * plan outside `EDITABLE_PLAN_NAMES`, or has no pricing row. All-or-nothing:
+   * one offender blocks the whole account. Required, not optional — the backend
+   * slice that emits this field is already merged and deployed. */
+  blockedByPlan: boolean;
+  /** Non-empty iff `blockedByPlan`. Only the offenders, never the whole target set. */
+  blockedByPlanMerchants: BackofficeBlockedPlanMerchantDto[];
 }
 
 /** GET account-deletion/:userId/impact query params AND DELETE account-deletion/:userId

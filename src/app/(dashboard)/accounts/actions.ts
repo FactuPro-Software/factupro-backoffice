@@ -35,6 +35,10 @@ const ERROR_KEY_BY_CODE: Record<string, string> = {
   MERCHANT_ACCOUNT_THIRD_PARTY_ACK_REQUIRED_ERROR: 'thirdPartyAckRequired',
   MERCHANT_ACCOUNT_USER_NOT_FOUND_ERROR: 'userNotFound',
   MERCHANT_ACCOUNT_TARGET_SET_INVALID_ERROR: 'targetSetInvalid',
+  // account-deletion-plan-guard — keyed by the WIRE VALUE (`ME035`), not the enum
+  // name, unlike the entries above (see the discovered `ERROR_KEY_BY_CODE`
+  // mis-keying defect, out of scope for this change).
+  ME035: 'planBlocked',
 };
 
 function resolveErrorKey(error: BackofficeApiError): string {
