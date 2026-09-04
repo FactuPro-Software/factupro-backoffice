@@ -147,7 +147,13 @@ export function DeleteAccountCard({ account }: DeleteAccountCardProps) {
     ? confirmValue.trim().toLowerCase() === impact.confirmationToken.trim().toLowerCase()
     : false;
   const deleteDisabled = !impact || !tokenMatches || !warningsAcked || isDeleting;
-  const impactStepCanContinue = impactState === 'loaded' && impact !== null;
+  // account-deletion-plan-guard — the whole target set is blocked when ANY
+  // merchant in it is on a non-editable pricing plan (or has no pricing row at
+  // all, fail-closed). The server is the sole enforcement authority (DELETE
+  // still 409s with ME035 regardless); this only gates the client's Continue
+  // button so the operator cannot reach the confirmation step.
+  const planBlocked = impact?.blockedByPlan === true;
+  const impactStepCanContinue = impactState === 'loaded' && impact !== null && !planBlocked;
 
   function handleContinue() {
     if (step === 'impact') {
@@ -237,11 +243,30 @@ export function DeleteAccountCard({ account }: DeleteAccountCardProps) {
                       <AlertDescription>{tToast(`${impactErrorKey}Body`)}</AlertDescription>
                     </Alert>
                   ) : impact ? (
-                    <AccountImpactTable
-                      rowCounts={impact.rowCounts}
-                      verifactuExposure={impact.verifactuExposure}
-                      thirdPartyExposure={impact.thirdPartyExposure}
-                    />
+                    <div className="flex flex-col gap-4">
+                      {planBlocked && (
+                        <Alert variant="destructive">
+                          <AlertTriangle />
+                          <AlertTitle>{t('planBlocked.title')}</AlertTitle>
+                          <AlertDescription>
+                            <p>{t('planBlocked.description')}</p>
+                            <ul className="mt-1 flex flex-col gap-0.5 text-xs">
+                              {impact.blockedByPlanMerchants.map((m) => (
+                                <li key={m.id}>
+                                  {m.name} — {m.nif ?? '—'} —{' '}
+                                  {m.pricingPlanName ?? t('planBlocked.unknownPlan')}
+                                </li>
+                              ))}
+                            </ul>
+                          </AlertDescription>
+                        </Alert>
+                      )}
+                      <AccountImpactTable
+                        rowCounts={impact.rowCounts}
+                        verifactuExposure={impact.verifactuExposure}
+                        thirdPartyExposure={impact.thirdPartyExposure}
+                      />
+                    </div>
                   ) : null)}
 
                 {step === 'warnings' && impact && (

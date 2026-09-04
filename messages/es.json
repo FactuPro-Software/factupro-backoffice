@@ -214,6 +214,11 @@
       "description": "Esto eliminará permanentemente los merchants indicados a continuación. Esta acción no se puede deshacer.",
       "targetMerchantsTitle": "Empresas afectadas ({n}):",
       "openButton": "Eliminar cuenta",
+      "planBlocked": {
+        "title": "Eliminación bloqueada por plan de tarifa",
+        "description": "No se puede eliminar esta cuenta porque incluye uno o más merchants con un plan de tarifa no editable. Cambia su plan antes de continuar:",
+        "unknownPlan": "sin plan"
+      },
       "dialog": {
         "impactTitle": "Impacto de la eliminación",
         "warningsTitle": "Avisos legales antes de continuar",
@@ -247,6 +252,8 @@
         "userNotFoundBody": "Esta cuenta ya no existe. Puede que ya se haya eliminado.",
         "targetSetInvalidTitle": "El merchant ya no es válido",
         "targetSetInvalidBody": "El NIF buscado ya no pertenece a este usuario, o el merchant fue eliminado desde que abriste esta vista. Vuelve a buscar e inténtalo de nuevo.",
+        "planBlockedTitle": "Eliminación bloqueada por plan de tarifa",
+        "planBlockedBody": "Uno o más merchants de esta cuenta están en un plan de tarifa no editable. Cambia su plan antes de eliminar la cuenta.",
         "connectionTitle": "Sin conexión con la API",
         "connectionBody": "No se pudo contactar con el backend. Inténtalo de nuevo.",
         "unexpectedTitle": "Error inesperado",
