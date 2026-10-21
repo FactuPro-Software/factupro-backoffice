@@ -83,16 +83,30 @@ export function ExpirationDateEditor({ pricing, minExpirationDate }: ExpirationD
           <CardTitle>{t('cardTitle')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <Alert>
-            <Info />
-            <AlertTitle>{t('notEditableTitle')}</AlertTitle>
-            <AlertDescription>
-              {t.rich('notEditableBody', {
-                planName: pricing.pricing.planName,
-                code: (chunks) => <code>{chunks}</code>,
-              })}
-            </AlertDescription>
-          </Alert>
+          {pricing.notEditableReason === 'PLAN_ACTIVE' ? (
+            <Alert>
+              <Info />
+              <AlertTitle>{t('planActiveTitle')}</AlertTitle>
+              <AlertDescription>
+                {t.rich('planActiveBody', {
+                  planName: pricing.pricing.planName,
+                  date: toDdMmYyyy(currentExpiration),
+                  code: (chunks) => <code>{chunks}</code>,
+                })}
+              </AlertDescription>
+            </Alert>
+          ) : (
+            <Alert>
+              <Info />
+              <AlertTitle>{t('notEditableTitle')}</AlertTitle>
+              <AlertDescription>
+                {t.rich('notEditableBody', {
+                  planName: pricing.pricing.planName,
+                  code: (chunks) => <code>{chunks}</code>,
+                })}
+              </AlertDescription>
+            </Alert>
+          )}
         </CardContent>
       </Card>
     );

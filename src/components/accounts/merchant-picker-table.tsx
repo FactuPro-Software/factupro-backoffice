@@ -15,17 +15,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import type {
-  AccountMerchantFactsDto,
-  BackofficeMerchantPricingDto,
-} from '@/server/api/endpoints/merchant-pricing';
+import { isPlanEligible } from '@/lib/accounts/is-plan-eligible';
+import type { ListedAccountMerchant } from '@/lib/accounts/listed-account-merchant';
+import type { BackofficeMerchantPricingDto } from '@/server/api/endpoints/merchant-pricing';
 import { PlanBadge } from './plan-badge';
 
 interface MerchantPickerTableProps {
   email: string;
-  /** A24 — ALL merchants the resolved user OWNS (the email entry point's full
-   * target set), never a partial/paginated view. */
-  targets: AccountMerchantFactsDto[];
+  /** SCRUM-154 — every merchant the user owns (A24) followed by the ones reached
+   * through a non-owner role/permission, never a partial/paginated view. */
+  merchants: ListedAccountMerchant[];
   /** Pricing is a distinct, optional overlay (D7) — a target merchant without a
    * `MerchantPricingData` row is still listed, with `—` + a "no plan data" badge. */
   pricingByMerchantId: Map<string, BackofficeMerchantPricingDto>;
@@ -34,8 +33,8 @@ interface MerchantPickerTableProps {
 /** F3: zero date-math — this is a plain string slice, never a re-derivation of the Madrid day. */
 const toDdMmYyyy = (dateOnly: string) => dateOnly.split('-').reverse().join('/');
 
-/** STATE 2 — shown only when `by=email` and the resolved account's target set has more than 1 merchant. */
-export function MerchantPickerTable({ email, targets, pricingByMerchantId }: MerchantPickerTableProps) {
+/** STATE 2 — shown only when `by=email` and the user is linked to more than 1 merchant. */
+export function MerchantPickerTable({ email, merchants, pricingByMerchantId }: MerchantPickerTableProps) {
   const t = useTranslations('accounts.picker');
 
   return (
@@ -50,7 +49,7 @@ export function MerchantPickerTable({ email, targets, pricingByMerchantId }: Mer
       <Card>
         <CardHeader>
           <CardTitle>{t('title', { email })}</CardTitle>
-          <CardDescription>{t('count', { n: targets.length })}</CardDescription>
+          <CardDescription>{t('count', { n: merchants.length })}</CardDescription>
         </CardHeader>
         <Table>
           <TableHeader>
@@ -63,17 +62,22 @@ export function MerchantPickerTable({ email, targets, pricingByMerchantId }: Mer
             </TableRow>
           </TableHeader>
           <TableBody>
-            {targets.map((merchant) => {
+            {merchants.map(({ merchant, isOwner }) => {
               const pricing = pricingByMerchantId.get(merchant.id) ?? null;
               return (
                 <TableRow key={merchant.id}>
-                  <TableCell className="font-medium">{merchant.name}</TableCell>
+                  <TableCell className="font-medium">
+                    {merchant.name}
+                    <Badge variant="outline" className="ml-2">
+                      {t(isOwner ? 'owner' : 'member')}
+                    </Badge>
+                  </TableCell>
                   <TableCell className="font-mono text-sm">
                     {merchant.nif ?? <span className="text-muted-foreground">—</span>}
                   </TableCell>
                   <TableCell>
                     {pricing ? (
-                      <PlanBadge planName={pricing.pricing.planName} editable={pricing.editable} />
+                      <PlanBadge planName={pricing.pricing.planName} eligible={isPlanEligible(pricing)} />
                     ) : (
                       <Badge variant="outline">{t('noPlanData')}</Badge>
                     )}
@@ -82,10 +86,12 @@ export function MerchantPickerTable({ email, targets, pricingByMerchantId }: Mer
                     {pricing ? (
                       <>
                         {toDdMmYyyy(pricing.pricing.expirationDateMadrid)}
-                        {pricing.pricing.expired && (
+                        {pricing.pricing.expired ? (
                           <Badge variant="destructive" className="ml-2">
                             {t('expired')}
                           </Badge>
+                        ) : (
+                          <Badge className="ml-2 bg-brand-soft text-foreground">{t('active')}</Badge>
                         )}
                       </>
                     ) : (

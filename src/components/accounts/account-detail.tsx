@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { isPlanEligible } from '@/lib/accounts/is-plan-eligible';
+import type { ListedAccountMerchant } from '@/lib/accounts/listed-account-merchant';
 import type {
   BackofficeMerchantPricingDto,
   ResolvedBackofficeAccountDto,
@@ -14,11 +16,12 @@ import { ExpirationDateEditor } from './expiration-date-editor';
 import { PlanBadge } from './plan-badge';
 
 interface AccountDetailProps {
-  /** D3/D7 — the resolved account; `account.targetMerchants[0]` is the SINGLE
-   * source of truth for the merchant card (guaranteed length 1 by the caller,
-   * `page.tsx`'s `PlansResults`). Also forwarded to `DeleteAccountCard` verbatim
+  /** D3/D7 — the resolved account, forwarded to `DeleteAccountCard` verbatim
    * (entryPoint/matchedNif threading, D2). */
   account: ResolvedBackofficeAccountDto;
+  /** SCRUM-154 — the merchant shown in the card. The danger zone only renders when
+   * the user owns it: deleting an account never reaches a merchant it only belongs to. */
+  listed: ListedAccountMerchant;
   /** `null` when the target merchant has no `MerchantPricingData` row (D7) — a
    * distinct, valid, non-error state. The plan card and `ExpirationDateEditor`
    * only render when this is non-null. */
@@ -34,8 +37,8 @@ const toDdMmYyyy = (dateOnly: string) => dateOnly.split('-').reverse().join('/')
 
 /** STATE 3 — read-only Card 1 (merchant facts, D3) + the conditional Cards 2-3
  * (plan + `ExpirationDateEditor`, only when `pricing !== null`, D7). */
-export function AccountDetail({ account, pricing, backHref, backLabel, minExpirationDate }: AccountDetailProps) {
-  const merchant = account.targetMerchants[0];
+export function AccountDetail({ account, listed, pricing, backHref, backLabel, minExpirationDate }: AccountDetailProps) {
+  const { merchant, isOwner } = listed;
   const t = useTranslations('accounts.detail');
 
   return (
@@ -70,6 +73,12 @@ export function AccountDetail({ account, pricing, backHref, backLabel, minExpira
             <dt className="text-xs text-muted-foreground">{t('status')}</dt>
             <dd className="text-sm font-medium">{merchant.status}</dd>
           </div>
+          <div className="flex items-baseline gap-2">
+            <dt className="text-xs text-muted-foreground">{t('relation')}</dt>
+            <dd>
+              <Badge variant="outline">{t(isOwner ? 'owner' : 'member')}</Badge>
+            </dd>
+          </div>
         </CardContent>
       </Card>
 
@@ -83,7 +92,7 @@ export function AccountDetail({ account, pricing, backHref, backLabel, minExpira
               <div className="flex items-baseline gap-2">
                 <dt className="text-xs text-muted-foreground">{t('plan')}</dt>
                 <dd className="text-sm font-medium">
-                  <PlanBadge planName={pricing.pricing.planName} editable={pricing.editable} />
+                  <PlanBadge planName={pricing.pricing.planName} eligible={isPlanEligible(pricing)} />
                 </dd>
               </div>
               <div className="flex items-baseline gap-2">
@@ -120,7 +129,7 @@ export function AccountDetail({ account, pricing, backHref, backLabel, minExpira
         </Card>
       )}
 
-      <DeleteAccountCard account={account} />
+      {isOwner && <DeleteAccountCard account={account} />}
     </div>
   );
 }

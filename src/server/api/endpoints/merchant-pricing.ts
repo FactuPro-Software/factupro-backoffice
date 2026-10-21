@@ -85,7 +85,8 @@ export interface BackofficePricingSummaryDto {
   expired: boolean;
 }
 
-export type BackofficeNotEditableReason = 'PLAN_NOT_ELIGIBLE';
+/** `PLAN_ACTIVE` (SCRUM-154) — an eligible trial/digital_kit plan that has not expired yet. */
+export type BackofficeNotEditableReason = 'PLAN_NOT_ELIGIBLE' | 'PLAN_ACTIVE';
 
 export interface BackofficeMerchantPricingDto {
   merchant: BackofficeMerchantSummaryDto;
@@ -96,7 +97,8 @@ export interface BackofficeMerchantPricingDto {
 
 /**
  * D7 — uniform response for BOTH `by-nif` and `by-user-email`. `merchants` is a
- * subset of `account.targetMerchants` — cross-reference by `merchant.id` to know
+ * subset of `account.targetMerchants` plus, on the email path (SCRUM-154),
+ * `account.otherMembershipMerchants` — cross-reference by `merchant.id` to know
  * which target merchants have pricing data (D7's WARNING: never assume index
  * alignment, a target merchant without pricing is simply absent from this array).
  */
@@ -131,7 +133,8 @@ export async function getMerchantPricingByNif(
 
 /**
  * GET merchant-pricing/by-user-email — resolved account (D3) + pricing for every
- * merchant the user OWNS (TRASH included, D4; non-owner roles excluded, A19/A22).
+ * merchant the user OWNS (TRASH included, D4) and, since SCRUM-154, for every
+ * merchant reached through a non-owner role/permission (`otherMembershipMerchants`).
  * `account.targetMerchants.length === 0` is the ONLY true not-found state (a user
  * existing but owning zero merchants) — 404 (`USER_FIND_NOT_FOUND`) only when no
  * user matches the email at all.
@@ -149,7 +152,8 @@ export async function getMerchantPricingsByUserEmail(
 
 /**
  * PATCH merchant-pricing/:merchantId/expiration-date — server re-validates the plan is
- * `trial`/`digital_kit` regardless of client-side gating. `expirationDate` MUST be `yyyy-MM-dd`.
+ * `trial`/`digital_kit` AND already expired regardless of client-side gating.
+ * `expirationDate` MUST be `yyyy-MM-dd`.
  */
 export async function updateMerchantExpirationDate(
   merchantId: string,
