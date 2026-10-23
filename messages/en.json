@@ -137,6 +137,16 @@
       "unexpectedTitle": "Unexpected error",
       "unexpectedBody": "Could not complete the search. Try again."
     },
+    "relations": {
+      "owner": "Owner",
+      "superAdmin": "Super admin",
+      "administrator": "Administrator",
+      "advicer": "Advisor",
+      "worker": "Employee",
+      "invoicer": "Invoicer",
+      "analyst": "Analyst",
+      "member": "Member"
+    },
     "picker": {
       "back": "Back to search",
       "title": "Merchants for {email}",
@@ -148,8 +158,6 @@
       "select": "Select",
       "expired": "Expired",
       "noPlanData": "No plan data",
-      "owner": "Owner",
-      "member": "Member",
       "active": "Active"
     },
     "detail": {
@@ -168,9 +176,7 @@
       "active": "Active",
       "expired": "Expired",
       "pricingMissingNotice": "This merchant has no associated plan data.",
-      "relation": "Relation",
-      "owner": "Owner",
-      "member": "Member"
+      "relation": "Relation"
     },
     "editor": {
       "cardTitle": "New expiration date",
@@ -188,6 +194,8 @@
       "validationEmpty": "Select a date.",
       "validationPast": "The date must be after today.",
       "unchanged": "You haven't changed the date.",
+      "noPermissionTitle": "No permission to edit",
+      "noPermissionBody": "This user is neither the owner nor a super admin of this merchant, so its plan cannot be changed from here.",
       "planActiveTitle": "Active plan: cannot be edited",
       "planActiveBody": "The «<code>{planName}</code>» plan is active until {date}. The expiration date can only be changed once the plan has expired."
     },

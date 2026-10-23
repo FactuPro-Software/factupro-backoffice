@@ -41,6 +41,8 @@ export interface AccountMerchantFactsDto {
   status: string;
   /** ISO UTC instant. */
   createdAt: string;
+  /** SCRUM-154 — the user's role at this merchant (`root` wins), `null` for a permission-only link. Never ownership. */
+  roleName: string | null;
 }
 
 /**

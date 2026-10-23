@@ -18,6 +18,7 @@ import {
 import { isPlanEligible } from '@/lib/accounts/is-plan-eligible';
 import type { ListedAccountMerchant } from '@/lib/accounts/listed-account-merchant';
 import type { BackofficeMerchantPricingDto } from '@/server/api/endpoints/merchant-pricing';
+import { MerchantRelationBadge } from './merchant-relation-badge';
 import { PlanBadge } from './plan-badge';
 
 interface MerchantPickerTableProps {
@@ -62,15 +63,14 @@ export function MerchantPickerTable({ email, merchants, pricingByMerchantId }: M
             </TableRow>
           </TableHeader>
           <TableBody>
-            {merchants.map(({ merchant, isOwner }) => {
+            {merchants.map((listed) => {
+              const { merchant } = listed;
               const pricing = pricingByMerchantId.get(merchant.id) ?? null;
               return (
                 <TableRow key={merchant.id}>
                   <TableCell className="font-medium">
                     {merchant.name}
-                    <Badge variant="outline" className="ml-2">
-                      {t(isOwner ? 'owner' : 'member')}
-                    </Badge>
+                    <MerchantRelationBadge listed={listed} className="ml-2" />
                   </TableCell>
                   <TableCell className="font-mono text-sm">
                     {merchant.nif ?? <span className="text-muted-foreground">—</span>}

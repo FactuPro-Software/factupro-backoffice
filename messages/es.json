@@ -137,6 +137,16 @@
       "unexpectedTitle": "Error inesperado",
       "unexpectedBody": "No se pudo completar la búsqueda. Inténtalo de nuevo."
     },
+    "relations": {
+      "owner": "Propietario/a",
+      "superAdmin": "Super admin",
+      "administrator": "Administrador/a",
+      "advicer": "Asesor/a",
+      "worker": "Empleado/a",
+      "invoicer": "Facturador/a",
+      "analyst": "Analista",
+      "member": "Miembro"
+    },
     "picker": {
       "back": "Volver a buscar",
       "title": "Merchants de {email}",
@@ -148,8 +158,6 @@
       "select": "Seleccionar",
       "expired": "Expirado",
       "noPlanData": "Sin datos de plan",
-      "owner": "Propietario/a",
-      "member": "Miembro",
       "active": "Activo"
     },
     "detail": {
@@ -168,9 +176,7 @@
       "active": "Activo",
       "expired": "Expirado",
       "pricingMissingNotice": "Este merchant no tiene datos de plan asociados.",
-      "relation": "Relación",
-      "owner": "Propietario/a",
-      "member": "Miembro"
+      "relation": "Relación"
     },
     "editor": {
       "cardTitle": "Nueva fecha de expiración",
@@ -188,6 +194,8 @@
       "validationEmpty": "Selecciona una fecha.",
       "validationPast": "La fecha debe ser posterior a hoy.",
       "unchanged": "No has cambiado la fecha.",
+      "noPermissionTitle": "Sin permiso para editar",
+      "noPermissionBody": "Este usuario no es el propietario ni super admin de este merchant, así que su plan no se puede modificar desde aquí.",
       "planActiveTitle": "Plan activo: no se puede editar",
       "planActiveBody": "El plan «<code>{planName}</code>» sigue activo hasta el {date}. Solo se puede modificar la fecha de expiración cuando el plan ha expirado."
     },

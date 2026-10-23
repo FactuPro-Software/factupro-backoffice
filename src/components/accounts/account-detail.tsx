@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { canEditMerchantPlan } from '@/lib/accounts/can-edit-merchant-plan';
 import { isPlanEligible } from '@/lib/accounts/is-plan-eligible';
 import type { ListedAccountMerchant } from '@/lib/accounts/listed-account-merchant';
 import type {
@@ -13,6 +14,7 @@ import type {
 } from '@/server/api/endpoints/merchant-pricing';
 import { DeleteAccountCard } from './delete-account-card';
 import { ExpirationDateEditor } from './expiration-date-editor';
+import { MerchantRelationBadge } from './merchant-relation-badge';
 import { PlanBadge } from './plan-badge';
 
 interface AccountDetailProps {
@@ -20,7 +22,8 @@ interface AccountDetailProps {
    * (entryPoint/matchedNif threading, D2). */
   account: ResolvedBackofficeAccountDto;
   /** SCRUM-154 — the merchant shown in the card. The danger zone only renders when
-   * the user owns it: deleting an account never reaches a merchant it only belongs to. */
+   * the user owns it: deleting an account never reaches a merchant it only belongs to.
+   * The plan is only editable for the owner or a super admin (`root` role). */
   listed: ListedAccountMerchant;
   /** `null` when the target merchant has no `MerchantPricingData` row (D7) — a
    * distinct, valid, non-error state. The plan card and `ExpirationDateEditor`
@@ -76,7 +79,7 @@ export function AccountDetail({ account, listed, pricing, backHref, backLabel, m
           <div className="flex items-baseline gap-2">
             <dt className="text-xs text-muted-foreground">{t('relation')}</dt>
             <dd>
-              <Badge variant="outline">{t(isOwner ? 'owner' : 'member')}</Badge>
+              <MerchantRelationBadge listed={listed} />
             </dd>
           </div>
         </CardContent>
@@ -121,7 +124,11 @@ export function AccountDetail({ account, listed, pricing, backHref, backLabel, m
             </CardContent>
           </Card>
 
-          <ExpirationDateEditor pricing={pricing} minExpirationDate={minExpirationDate} />
+          <ExpirationDateEditor
+            pricing={pricing}
+            canEditPlan={canEditMerchantPlan(listed)}
+            minExpirationDate={minExpirationDate}
+          />
         </>
       ) : (
         <Card>

@@ -26,6 +26,8 @@ import type { BackofficeMerchantPricingDto } from '@/server/api/endpoints/mercha
 
 interface ExpirationDateEditorProps {
   pricing: BackofficeMerchantPricingDto;
+  /** SCRUM-154 — false when the searched user is neither the owner nor a super admin of this merchant. */
+  canEditPlan: boolean;
   /** Tomorrow in Europe/Madrid, 'yyyy-MM-dd' — computed server-side (F3), never re-derived here. */
   minExpirationDate: string;
 }
@@ -36,7 +38,7 @@ const toDdMmYyyy = (dateOnly: string) => dateOnly.split('-').reverse().join('/')
 const INITIAL_STATE: UpdateExpirationState = { status: 'idle' };
 
 /** Card 3 — "Nueva fecha de expiración". Native `input[type=date]` (F2), no date libraries (F3). */
-export function ExpirationDateEditor({ pricing, minExpirationDate }: ExpirationDateEditorProps) {
+export function ExpirationDateEditor({ pricing, canEditPlan, minExpirationDate }: ExpirationDateEditorProps) {
   const t = useTranslations('accounts.editor');
   const tConfirm = useTranslations('accounts.confirm');
   const tToast = useTranslations('accounts.toast');
@@ -76,14 +78,20 @@ export function ExpirationDateEditor({ pricing, minExpirationDate }: ExpirationD
     }
   }, [state, tToast]);
 
-  if (!pricing.editable) {
+  if (!canEditPlan || !pricing.editable) {
     return (
       <Card>
         <CardHeader>
           <CardTitle>{t('cardTitle')}</CardTitle>
         </CardHeader>
         <CardContent>
-          {pricing.notEditableReason === 'PLAN_ACTIVE' ? (
+          {!canEditPlan ? (
+            <Alert>
+              <Info />
+              <AlertTitle>{t('noPermissionTitle')}</AlertTitle>
+              <AlertDescription>{t('noPermissionBody')}</AlertDescription>
+            </Alert>
+          ) : pricing.notEditableReason === 'PLAN_ACTIVE' ? (
             <Alert>
               <Info />
               <AlertTitle>{t('planActiveTitle')}</AlertTitle>
