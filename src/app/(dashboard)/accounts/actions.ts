@@ -39,6 +39,7 @@ const ERROR_KEY_BY_CODE: Record<string, string> = {
   // name, unlike the entries above (see the discovered `ERROR_KEY_BY_CODE`
   // mis-keying defect, out of scope for this change).
   ME035: 'planBlocked',
+  ME036: 'planActive',
 };
 
 function resolveErrorKey(error: BackofficeApiError): string {
@@ -73,7 +74,7 @@ export async function updateExpirationDateAction(
       status: 'success',
       merchantName: updated.merchant.name,
       from: currentExpirationDate,
-      to: updated.pricing.expirationDateMadrid,
+      to: updated.pricing.expirationDateMadrid ?? expirationDate,
     };
   } catch (error) {
     if (error instanceof BackofficeApiError) {

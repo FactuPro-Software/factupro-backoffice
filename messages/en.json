@@ -137,16 +137,30 @@
       "unexpectedTitle": "Unexpected error",
       "unexpectedBody": "Could not complete the search. Try again."
     },
+    "expiry": {
+      "active": "Active",
+      "expired": "Expired",
+      "unknown": "No date"
+    },
+    "relations": {
+      "owner": "Owner",
+      "superAdmin": "Super admin",
+      "administrator": "Administrator",
+      "advicer": "Advisor",
+      "worker": "Employee",
+      "invoicer": "Invoicer",
+      "analyst": "Analyst",
+      "member": "Member"
+    },
     "picker": {
       "back": "Back to search",
       "title": "Merchants for {email}",
-      "count": "Companies it owns ({n})",
+      "count": "Companies the user belongs to ({n})",
       "columnMerchant": "Merchant",
       "columnNif": "NIF",
       "columnPlan": "Plan",
       "columnExpires": "Expires",
       "select": "Select",
-      "expired": "Expired",
       "noPlanData": "No plan data"
     },
     "detail": {
@@ -162,9 +176,10 @@
       "level": "Level",
       "expiresOn": "Expires on",
       "expiresHint": "00:00 (Madrid time) — first day without access.",
-      "active": "Active",
-      "expired": "Expired",
-      "pricingMissingNotice": "This merchant has no associated plan data."
+      "expiresHintStripe": "End of the subscription's current Stripe billing period.",
+      "expiresHintStripeMissing": "This paid plan has no Stripe period end date on record.",
+      "pricingMissingNotice": "This merchant has no associated plan data.",
+      "relation": "Relation"
     },
     "editor": {
       "cardTitle": "New expiration date",
@@ -181,7 +196,11 @@
       "cancel": "Cancel",
       "validationEmpty": "Select a date.",
       "validationPast": "The date must be after today.",
-      "unchanged": "You haven't changed the date."
+      "unchanged": "You haven't changed the date.",
+      "noPermissionTitle": "No permission to edit",
+      "noPermissionBody": "This user is neither the owner nor a super admin of this merchant, so its plan cannot be changed from here.",
+      "planActiveTitle": "Active plan: cannot be edited",
+      "planActiveBody": "The «<code>{planName}</code>» plan is active until {date}. The expiration date can only be changed once the plan has expired."
     },
     "confirm": {
       "title": "Confirm the expiration change?",
@@ -206,7 +225,9 @@
       "connectionTitle": "No connection to the API",
       "connectionBody": "Could not reach the backend. Try again.",
       "unexpectedTitle": "Unexpected error",
-      "unexpectedBody": "Could not save the change. Try again."
+      "unexpectedBody": "Could not save the change. Try again.",
+      "planActiveTitle": "Could not update",
+      "planActiveBody": "This merchant’s plan is still active and cannot be changed. Reload the page."
     },
     "delete": {
       "cardTitle": "Danger zone",
