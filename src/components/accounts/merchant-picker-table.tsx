@@ -18,6 +18,7 @@ import {
 import { isPlanEligible } from '@/lib/accounts/is-plan-eligible';
 import type { ListedAccountMerchant } from '@/lib/accounts/listed-account-merchant';
 import type { BackofficeMerchantPricingDto } from '@/server/api/endpoints/merchant-pricing';
+import { ExpiryStatusBadge } from './expiry-status-badge';
 import { MerchantRelationBadge } from './merchant-relation-badge';
 import { PlanBadge } from './plan-badge';
 
@@ -85,14 +86,8 @@ export function MerchantPickerTable({ email, merchants, pricingByMerchantId }: M
                   <TableCell>
                     {pricing ? (
                       <>
-                        {toDdMmYyyy(pricing.pricing.expirationDateMadrid)}
-                        {pricing.pricing.expired ? (
-                          <Badge variant="destructive" className="ml-2">
-                            {t('expired')}
-                          </Badge>
-                        ) : (
-                          <Badge className="ml-2 bg-brand-soft text-foreground">{t('active')}</Badge>
-                        )}
+                        {pricing.pricing.expirationDateMadrid ? toDdMmYyyy(pricing.pricing.expirationDateMadrid) : '—'}
+                        <ExpiryStatusBadge expired={pricing.pricing.expired} className="ml-2" />
                       </>
                     ) : (
                       <span className="text-muted-foreground">—</span>

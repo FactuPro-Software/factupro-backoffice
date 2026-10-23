@@ -2,11 +2,11 @@ import { ArrowLeft } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { canEditMerchantPlan } from '@/lib/accounts/can-edit-merchant-plan';
 import { isPlanEligible } from '@/lib/accounts/is-plan-eligible';
+import { resolveExpiresHintKey } from '@/lib/accounts/resolve-expires-hint-key';
 import type { ListedAccountMerchant } from '@/lib/accounts/listed-account-merchant';
 import type {
   BackofficeMerchantPricingDto,
@@ -14,6 +14,7 @@ import type {
 } from '@/server/api/endpoints/merchant-pricing';
 import { DeleteAccountCard } from './delete-account-card';
 import { ExpirationDateEditor } from './expiration-date-editor';
+import { ExpiryStatusBadge } from './expiry-status-badge';
 import { MerchantRelationBadge } from './merchant-relation-badge';
 import { PlanBadge } from './plan-badge';
 
@@ -106,19 +107,15 @@ export function AccountDetail({ account, listed, pricing, backHref, backLabel, m
                 <div className="flex items-baseline gap-2">
                   <dt className="text-xs text-muted-foreground">{t('expiresOn')}</dt>
                   <dd className="text-base font-semibold">
-                    {toDdMmYyyy(pricing.pricing.expirationDateMadrid)}
+                    {pricing.pricing.expirationDateMadrid ? toDdMmYyyy(pricing.pricing.expirationDateMadrid) : '—'}
                   </dd>
                 </div>
-                <p className="text-xs text-muted-foreground">{t('expiresHint')}</p>
+                <p className="text-xs text-muted-foreground">{t(resolveExpiresHintKey(pricing.pricing))}</p>
               </div>
               <div className="flex items-baseline gap-2">
                 <dt className="text-xs text-muted-foreground">{t('status')}</dt>
                 <dd>
-                  {pricing.pricing.expired ? (
-                    <Badge variant="destructive">{t('expired')}</Badge>
-                  ) : (
-                    <Badge className="bg-brand-soft text-foreground">{t('active')}</Badge>
-                  )}
+                  <ExpiryStatusBadge expired={pricing.pricing.expired} />
                 </dd>
               </div>
             </CardContent>

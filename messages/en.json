@@ -137,6 +137,11 @@
       "unexpectedTitle": "Unexpected error",
       "unexpectedBody": "Could not complete the search. Try again."
     },
+    "expiry": {
+      "active": "Active",
+      "expired": "Expired",
+      "unknown": "No date"
+    },
     "relations": {
       "owner": "Owner",
       "superAdmin": "Super admin",
@@ -156,9 +161,7 @@
       "columnPlan": "Plan",
       "columnExpires": "Expires",
       "select": "Select",
-      "expired": "Expired",
-      "noPlanData": "No plan data",
-      "active": "Active"
+      "noPlanData": "No plan data"
     },
     "detail": {
       "backToSearch": "Back to search",
@@ -173,8 +176,8 @@
       "level": "Level",
       "expiresOn": "Expires on",
       "expiresHint": "00:00 (Madrid time) — first day without access.",
-      "active": "Active",
-      "expired": "Expired",
+      "expiresHintStripe": "End of the subscription's current Stripe billing period.",
+      "expiresHintStripeMissing": "This paid plan has no Stripe period end date on record.",
       "pricingMissingNotice": "This merchant has no associated plan data.",
       "relation": "Relation"
     },

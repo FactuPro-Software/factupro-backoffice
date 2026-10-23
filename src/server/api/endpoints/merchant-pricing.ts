@@ -76,15 +76,19 @@ export interface BackofficeMerchantSummaryDto {
   status: string;
 }
 
+/** Where `expirationDate` comes from: the plan column (trial/digital_kit) or the Stripe period end (paid plans). */
+export type BackofficeExpirationSource = 'PLAN' | 'STRIPE_SUBSCRIPTION';
+
 export interface BackofficePricingSummaryDto {
   id: string;
   planName: string;
   planLevel: number;
-  /** ISO UTC instant, e.g. '2026-11-30T23:00:00.000Z'. */
-  expirationDate: string;
+  /** ISO UTC instant, e.g. '2026-11-30T23:00:00.000Z'. `null` for a paid plan without a Stripe period end. */
+  expirationDate: string | null;
   /** Pre-computed Madrid calendar day, 'yyyy-MM-dd' — this is what the UI displays/edits. */
-  expirationDateMadrid: string;
-  expired: boolean;
+  expirationDateMadrid: string | null;
+  expired: boolean | null;
+  expirationSource: BackofficeExpirationSource;
 }
 
 /** `PLAN_ACTIVE` (SCRUM-154) — an eligible trial/digital_kit plan that has not expired yet. */

@@ -43,7 +43,7 @@ export function ExpirationDateEditor({ pricing, canEditPlan, minExpirationDate }
   const tConfirm = useTranslations('accounts.confirm');
   const tToast = useTranslations('accounts.toast');
 
-  const currentExpiration = pricing.pricing.expirationDateMadrid;
+  const currentExpiration = pricing.pricing.expirationDateMadrid ?? '';
   const formId = `expiration-date-form-${pricing.merchant.id}`;
 
   const [selectedDate, setSelectedDate] = useState(currentExpiration);

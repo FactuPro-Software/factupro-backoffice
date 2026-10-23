@@ -74,7 +74,7 @@ export async function updateExpirationDateAction(
       status: 'success',
       merchantName: updated.merchant.name,
       from: currentExpirationDate,
-      to: updated.pricing.expirationDateMadrid,
+      to: updated.pricing.expirationDateMadrid ?? expirationDate,
     };
   } catch (error) {
     if (error instanceof BackofficeApiError) {
