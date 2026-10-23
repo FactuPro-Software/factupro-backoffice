@@ -12,6 +12,7 @@ import { DeleteAccountCard } from '@/components/accounts/delete-account-card';
 import { AccountSearchForm } from '@/components/accounts/account-search-form';
 import { AccountsEmptyState } from '@/components/accounts/accounts-empty-state';
 import { AccountsSkeleton } from '@/components/accounts/accounts-skeleton';
+import { listAccountMerchants } from '@/lib/accounts/list-account-merchants';
 import {
   getMerchantPricingByNif,
   getMerchantPricingsByUserEmail,
@@ -84,10 +85,10 @@ interface PlansResultsProps {
  * Rev 4 (D7/A27) — ONE fetch per search. The pricing endpoint itself now returns
  * the resolved `account` block (D3), so there is no separate resolution call any
  * more (`resolveAccountByNif`/`resolveAccountByUserEmail` are deleted, backend and
- * frontend both). `account.targetMerchants.length` is the single source of truth
- * for branching (A24): 0 → not-found, 1 → detail (nif always lands here — the
- * selector narrows to exactly the matched merchant), >1 → picker + danger zone
- * (only reachable via email search).
+ * frontend both). `listAccountMerchants(account).length` drives the branching
+ * (SCRUM-154): 0 → not-found, 1 → detail (nif always lands here — the selector
+ * narrows to exactly the matched merchant), >1 → picker + danger zone (only
+ * reachable via email search; the danger zone needs at least one owned merchant).
  */
 async function PlansResults({ by, q, merchantId }: PlansResultsProps) {
   const minExpirationDate = computeMinExpirationDateMadrid();
@@ -100,20 +101,26 @@ async function PlansResults({ by, q, merchantId }: PlansResultsProps) {
   }
 
   const { account, merchants } = list;
+  // SCRUM-154 — owned merchants plus, on the email path, the ones the user only
+  // belongs to. `account.targetMerchants` stays owner-only for the danger zone.
+  const listedMerchants = listAccountMerchants(account);
 
-  // A27/D7 — the ONLY not-found source. A merchant that is owned but has zero
-  // pricing rows is a distinct "found, pricing missing" state (handled inside
-  // AccountDetail below), never conflated with true not-found.
-  if (account.targetMerchants.length === 0) {
+  // A27/D7 — a user linked to no merchant at all is the ONLY not-found state. A
+  // merchant with zero pricing rows is a distinct "found, pricing missing" state
+  // (handled inside AccountDetail below), never conflated with true not-found.
+  if (listedMerchants.length === 0) {
     return <SearchErrorAlert errorKey={by === 'nif' ? 'nifNotFound' : 'emailNotFound'} value={q} />;
   }
 
-  if (account.targetMerchants.length === 1) {
-    const pricing = merchants.find((entry) => entry.merchant.id === account.targetMerchants[0].id) ?? null;
+  const findPricing = (id: string) => merchants.find((entry) => entry.merchant.id === id) ?? null;
+
+  if (listedMerchants.length === 1) {
+    const [listed] = listedMerchants;
     return (
       <AccountDetail
         account={account}
-        pricing={pricing}
+        listed={listed}
+        pricing={findPricing(listed.merchant.id)}
         backHref="/accounts"
         backLabel="search"
         minExpirationDate={minExpirationDate}
@@ -121,16 +128,16 @@ async function PlansResults({ by, q, merchantId }: PlansResultsProps) {
     );
   }
 
-  // account.targetMerchants.length > 1 — only reachable via email search (A24:
-  // the nif entry point always narrows to exactly one target).
+  // listedMerchants.length > 1 — only reachable via email search (A24: the nif
+  // entry point always narrows to exactly one target and never adds memberships).
   if (merchantId) {
-    const merchant = account.targetMerchants.find((m) => m.id === merchantId);
-    if (merchant) {
-      const pricing = merchants.find((entry) => entry.merchant.id === merchant.id) ?? null;
+    const listed = listedMerchants.find((entry) => entry.merchant.id === merchantId);
+    if (listed) {
       return (
         <AccountDetail
           account={account}
-          pricing={pricing}
+          listed={listed}
+          pricing={findPricing(listed.merchant.id)}
           backHref={`/accounts?by=email&q=${encodeURIComponent(q)}`}
           backLabel="list"
           minExpirationDate={minExpirationDate}
@@ -140,20 +147,18 @@ async function PlansResults({ by, q, merchantId }: PlansResultsProps) {
     // Stale/invalid merchantId (e.g. edited URL) — fall back to the picker instead of erroring.
   }
 
-  // No merchant selected yet — the picker lists every target merchant (A24: ALL
-  // owned merchants on the email path), with the danger zone directly below it.
-  // A26 — the old "owns zero" degraded state (Gap 2) is unreachable here BY
-  // CONSTRUCTION: `account.targetMerchants.length === 0` already returned above,
-  // so `DeleteAccountCard` always receives a non-empty target set.
+  // No merchant selected yet — the picker lists every listed merchant, with the
+  // danger zone below it only when the user owns at least one (A26:
+  // `DeleteAccountCard` must always receive a non-empty target set).
   const pricingByMerchantId = new Map(merchants.map((entry) => [entry.merchant.id, entry]));
   return (
     <div className="flex max-w-5xl flex-col gap-6">
       <MerchantPickerTable
         email={account.user.email}
-        targets={account.targetMerchants}
+        merchants={listedMerchants}
         pricingByMerchantId={pricingByMerchantId}
       />
-      <DeleteAccountCard account={account} />
+      {account.targetMerchants.length > 0 && <DeleteAccountCard account={account} />}
     </div>
   );
 }
